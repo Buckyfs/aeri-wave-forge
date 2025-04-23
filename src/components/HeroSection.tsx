@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+    <section className="relative min-h-[80vh] flex items-center pt-16 overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-wave-pattern opacity-10"></div>
       
@@ -38,9 +38,9 @@ const HeroSection = () => {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-3xl opacity-20"></div>
             <div className="relative animate-float rounded-2xl overflow-hidden shadow-xl">
               <img 
-                src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&q=80" 
-                alt="Research lab with innovative technology" 
-                className="w-full rounded-2xl" 
+                src="https://images.unsplash.com/photo-1615729947596-a598e5de0ab3" 
+                alt="Green landscape representing environmental innovation" 
+                className="w-full h-[400px] object-cover" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-30"></div>
               
