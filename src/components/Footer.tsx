@@ -1,4 +1,3 @@
-
 import { ArrowRight } from "lucide-react";
 
 const Footer = () => {
@@ -54,10 +53,10 @@ const Footer = () => {
           <div>
             <h3 className="font-heading text-sm font-semibold mb-4 text-primary">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-sm text-gray-600">123 Innovation Way</li>
-              <li className="text-sm text-gray-600">Research Park, CA 94103</li>
-              <li className="text-sm text-gray-600">contact@aeri.org</li>
-              <li className="text-sm text-gray-600">(555) 123-4567</li>
+              <li className="text-sm text-gray-600">8300 Wisconsin Ave</li>
+              <li className="text-sm text-gray-600">Bethesda, MD 20814</li>
+              <li className="text-sm text-gray-600">United States</li>
+              <li className="text-sm text-gray-600">contact@aeri-research.org</li>
             </ul>
             <div className="flex space-x-4 mt-4">
               <a href="#" className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:border-primary hover:text-primary transition-colors">

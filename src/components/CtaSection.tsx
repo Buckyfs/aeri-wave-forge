@@ -1,15 +1,16 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+import { ActionButton } from '@/components/ui/action-button';
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight } from "lucide-react";
+import { api } from "@/lib/api";
 
 const CtaSection = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const { toast } = useToast();
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate email
@@ -21,15 +22,26 @@ const CtaSection = () => {
       });
       return;
     }
-    
-    // Success message
-    toast({
-      title: "Subscription Successful!",
-      description: "Thank you for subscribing to our newsletter.",
-    });
-    
-    // Reset form
-    setEmail("");
+
+    try {
+      // Save to Supabase
+      await api.subscribeToNewsletter(email);
+      
+      // Success message
+      toast({
+        title: "Subscription Successful!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      
+      // Reset form
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was an error subscribing to the newsletter. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -49,18 +61,30 @@ const CtaSection = () => {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
-            <Button className="bg-secondary text-primary hover:bg-secondary/90 group">
+            <ActionButton 
+              to="/apply-researcher"
+              variant="secondary"
+              className="bg-[#00FFA3] hover:bg-[#00FFA3]/90 text-black"
+              showArrow
+            >
               Apply as Researcher
-              <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button className="bg-white text-primary hover:bg-white/90 group">
+            </ActionButton>
+            <ActionButton 
+              to="/become-mentor"
+              variant="outline"
+              className="bg-white text-primary hover:bg-white/90"
+              showArrow
+            >
               Become a Mentor
-              <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button className="bg-accent hover:bg-accent/90 group">
+            </ActionButton>
+            <ActionButton 
+              to="/become-partner"
+              variant="primary"
+              className="bg-primary hover:bg-primary/90 text-white"
+              showArrow
+            >
               Partner With Us
-              <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            </ActionButton>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 shadow-lg">

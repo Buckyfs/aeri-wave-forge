@@ -1,33 +1,31 @@
-
+import React from 'react';
 import { Card } from "@/components/ui/card";
 
-interface MemberProps {
+type MemberProps = {
   name: string;
   role: string;
   description: string;
   image: string;
   quote?: string;
-}
+};
 
 const MemberProfile = ({ name, role, description, image, quote }: MemberProps) => {
   return (
     <div className="group relative">
-      <div className="hexagon aspect-square bg-white shadow-md overflow-hidden group-hover:shadow-lg transition-all duration-300">
+      <div className="aspect-square bg-white shadow-md overflow-hidden rounded-full group-hover:shadow-lg transition-all duration-300">
         <div className="relative h-full w-full">
           {/* Image */}
-          <div className="h-1/2 overflow-hidden">
-            <img
-              src={image}
-              alt={name}
-              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
-            />
-          </div>
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
+          />
           
-          {/* Content */}
-          <div className="h-1/2 p-4 bg-white">
-            <h3 className="font-heading text-sm font-semibold text-primary">{name}</h3>
-            <p className="text-xs text-gray-600 mb-2">{role}</p>
-            <p className="text-xs text-gray-500 line-clamp-2">{description}</p>
+          {/* Content overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+            <h3 className="font-heading text-sm font-semibold text-white">{name}</h3>
+            <p className="text-xs text-white/80">{role}</p>
+            <p className="text-xs text-white/70 line-clamp-2 mt-1">{description}</p>
           </div>
         </div>
       </div>
@@ -48,10 +46,10 @@ const MemberProfile = ({ name, role, description, image, quote }: MemberProps) =
 const CommunityShowcase = () => {
   const members = [
     {
-      name: "Alex Chen",
+      name: "Natalie Farquharson",
       role: "Environmental Engineering Student",
       description: "Leading carbon capture membrane research team",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300",
+      image: "/images/natalie.jpg",
       quote: "I never thought I could contribute to climate solutions until I joined AERI. Now I'm leading a project that could impact thousands."
     },
     {

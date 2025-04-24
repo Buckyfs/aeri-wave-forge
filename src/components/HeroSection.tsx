@@ -1,11 +1,10 @@
-
 import { ArrowRight } from 'lucide-react';
 import ParticlesBackground from './ParticlesBackground';
-import { Button } from '@/components/ui/button';
+import { ActionButton } from '@/components/ui/action-button';
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-16 overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center pt-12 overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-wave-pattern opacity-10"></div>
       
@@ -23,13 +22,21 @@ const HeroSection = () => {
               Join the movement where curiosity meets innovation. At AERI, we empower young minds to turn environmental challenges into sustainable solutions.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="btn-primary group">
+              <ActionButton 
+                to="/get-started"
+                variant="primary"
+                className="bg-primary hover:bg-primary/90 text-white"
+                showArrow
+              >
                 Get Started
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" className="btn-outline">
+              </ActionButton>
+              <ActionButton 
+                to="/about"
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary/10"
+              >
                 Learn More
-              </Button>
+              </ActionButton>
             </div>
           </div>
           

@@ -1,7 +1,7 @@
-
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
+import { ActionButton } from '@/components/ui/action-button';
 
 const GetStarted = () => {
   return (
@@ -20,19 +20,25 @@ const GetStarted = () => {
                 <div className="p-6 border rounded-lg">
                   <h3 className="text-xl font-semibold mb-4">For Researchers</h3>
                   <p className="mb-4">Lead innovative projects and gain hands-on experience.</p>
-                  <Button className="w-full">Apply Now</Button>
+                  <ActionButton to="/apply-researcher" variant="primary" className="w-full">
+                    Apply Now
+                  </ActionButton>
                 </div>
                 
                 <div className="p-6 border rounded-lg">
                   <h3 className="text-xl font-semibold mb-4">For Mentors</h3>
                   <p className="mb-4">Share your expertise and guide the next generation.</p>
-                  <Button variant="secondary" className="w-full">Join as Mentor</Button>
+                  <ActionButton to="/become-mentor" variant="secondary" className="w-full">
+                    Join as Mentor
+                  </ActionButton>
                 </div>
                 
                 <div className="p-6 border rounded-lg">
                   <h3 className="text-xl font-semibold mb-4">For Partners</h3>
                   <p className="mb-4">Collaborate with us on groundbreaking research.</p>
-                  <Button variant="outline" className="w-full">Partner With Us</Button>
+                  <ActionButton to="/become-partner" variant="outline" className="w-full">
+                    Partner With Us
+                  </ActionButton>
                 </div>
               </div>
             </div>
