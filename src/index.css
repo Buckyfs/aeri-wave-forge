@@ -43,44 +43,6 @@
     --aeri-light-gray: 210 40% 98%; /* very light gray */
     --aeri-dark-gray: 222.2 84% 4.9%;
   }
-
-  .dark {
-    --background: 224 71% 4%; /* very dark blue */
-    --foreground: 210 20% 98%; /* near white */
-
-    --card: 224 71% 9%; /* slightly lighter dark blue */
-    --card-foreground: 210 20% 98%;
-
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 210 20% 98%; /* near white */
-    --primary-foreground: 224 71% 15%; /* dark blue for contrast */
-
-    --secondary: 160 100% 50%; /* Electric Green - same as light */
-    --secondary-foreground: 207 67% 10%; /* Dark blue for contrast */
-
-    --muted: 224 71% 9%; /* slightly lighter dark blue */
-    --muted-foreground: 215 20.2% 65.1%; /* lighter gray */
-
-    --accent: 0 100% 71%; /* Warm Coral - same as light */
-    --accent-foreground: 210 20% 98%; /* near white */
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 217 33% 17%; /* dark gray-blue */
-    --input: 217 33% 22%; /* slightly lighter dark gray-blue */
-    --ring: 160 100% 50%; /* secondary */
-    
-    /* Keep AERI variables consistent? Or define dark versions? */
-    /* Assuming they stay the same for now */
-    --aeri-deep-blue: 207 67% 19%; 
-    --aeri-electric-green: 160 100% 50%;
-    --aeri-warm-coral: 0 100% 71%;
-    --aeri-light-gray: 210 40% 98%;
-    --aeri-dark-gray: 222.2 84% 4.9%;
-  }
 }
 
 @layer base {
