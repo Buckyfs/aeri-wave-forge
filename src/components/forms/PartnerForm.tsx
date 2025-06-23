@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { api } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
+import { useCreatePartner } from '@/hooks/useDatabase';
 
 const formSchema = z.object({
   organization_name: z.string().min(2, 'Organization name is required'),
@@ -19,9 +18,12 @@ const formSchema = z.object({
   message: z.string().min(10, 'Please provide more details about your interest'),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 export function PartnerForm() {
-  const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const createPartner = useCreatePartner();
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       organization_name: '',
@@ -33,20 +35,23 @@ export function PartnerForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormData) => {
     try {
-      await api.submitPartnerApplication(values);
-      toast({
-        title: 'Application submitted',
-        description: 'We will review your application and get back to you soon.',
-      });
+      // Ensure all required fields are present
+      const partnerData = {
+        organization_name: values.organization_name,
+        contact_name: values.contact_name,
+        email: values.email,
+        phone: values.phone || undefined,
+        partnership_type: values.partnership_type,
+        message: values.message,
+      };
+
+      await createPartner.mutateAsync(partnerData);
       form.reset();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'There was an error submitting your application. Please try again.',
-        variant: 'destructive',
-      });
+      // Error handling is done in the hook
+      console.error('Form submission error:', error);
     }
   };
 
@@ -149,8 +154,14 @@ export function PartnerForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">Submit Application</Button>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={createPartner.isPending}
+        >
+          {createPartner.isPending ? 'Submitting...' : 'Submit Application'}
+        </Button>
       </form>
     </Form>
   );
-} 
+}

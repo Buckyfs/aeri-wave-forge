@@ -1,13 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
+import { config, validateEnvironment } from './config';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables. Some features may not work correctly.');
-}
+// Validate environment variables
+validateEnvironment();
 
 export const supabase = createClient(
-  supabaseUrl || 'https://placeholder-url.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
-); 
+  config.supabase.url,
+  config.supabase.anonKey,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+    },
+  }
+);
