@@ -4,9 +4,10 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install production dependencies
+# Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+# Install dependencies
+RUN npm install
 
 # Copy source code
 COPY . .
