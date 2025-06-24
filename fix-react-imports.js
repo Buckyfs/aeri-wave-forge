@@ -1,53 +1,65 @@
 const fs = require("fs");
 const path = require("path");
 
-const targetDir = path.join(__dirname, "src", "components", "ui");
+const reactImportPattern = /^import\s+\*\s+as\s+React\s+from\s+["']react["'];?\s*$/gm;
+const fileExtensions = [".tsx", ".ts"];
 
-const reactImportRegex = /^import\s+((\*\s+as\s+)?React|\{.*?\})\s+from\s+['"]react['"];?\s*$/gm;
-
-function fixFile(filePath) {
-  let content = fs.readFileSync(filePath, "utf8");
-
-  // Find all react imports
-  const matches = [...content.matchAll(reactImportRegex)];
-
-  if (matches.length === 0) return;
-
-  // Remove all React imports at top
-  content = content.replace(reactImportRegex, "");
-
-  // Collect which named imports were used
-  const namedUsage = [];
-  if (content.includes("forwardRef")) namedUsage.push("forwardRef");
-  if (content.includes("useState")) namedUsage.push("useState");
-  if (content.includes("useEffect")) namedUsage.push("useEffect");
-  if (content.includes("createContext")) namedUsage.push("createContext");
-  if (content.includes("useRef")) namedUsage.push("useRef");
-  if (content.includes("Fragment")) namedUsage.push("Fragment");
-  if (content.match(/ElementRef\b/)) namedUsage.push("ElementRef");
-  if (content.match(/ComponentPropsWithoutRef\b/)) namedUsage.push("ComponentPropsWithoutRef");
-  if (content.match(/HTMLAttributes\b/)) namedUsage.push("HTMLAttributes");
-
-  if (namedUsage.length > 0) {
-    const importLine = `import { ${namedUsage.sort().join(", ")} } from "react";\n`;
-    content = importLine + content.trimStart();
-  }
-
-  fs.writeFileSync(filePath, content, "utf8");
-  console.log(`✅ Cleaned: ${path.relative(__dirname, filePath)}`);
+function collectFiles(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  return entries.flatMap(entry => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return collectFiles(fullPath);
+    if (entry.isFile() && fileExtensions.includes(path.extname(fullPath))) return [fullPath];
+    return [];
+  });
 }
 
-function walk(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+function transform(content) {
+  if (!content.includes("import * as React from")) return null;
+  let modified = content.replace(reactImportPattern, "");
 
-  for (const entry of entries) {
-    const res = path.resolve(dir, entry.name);
-    if (entry.isDirectory()) {
-      walk(res);
-    } else if (entry.isFile() && res.endsWith(".tsx")) {
-      fixFile(res);
+  const needs = [];
+
+  if (/React\.forwardRef\b/.test(modified)) needs.push("forwardRef");
+  if (/React\.useRef\b/.test(modified)) needs.push("useRef");
+  if (/React\.useEffect\b/.test(modified)) needs.push("useEffect");
+  if (/React\.useState\b/.test(modified)) needs.push("useState");
+  if (/React\.Fragment\b/.test(modified)) needs.push("Fragment");
+  if (/React\.ElementRef\b/.test(modified)) needs.push("ElementRef");
+  if (/React\.ComponentPropsWithoutRef\b/.test(modified)) needs.push("ComponentPropsWithoutRef");
+  if (/React\.ReactElement\b/.test(modified)) needs.push("ReactElement");
+
+  // Replace React.X usage with direct references
+  modified = modified
+    .replace(/\bReact\.forwardRef\b/g, "forwardRef")
+    .replace(/\bReact\.useRef\b/g, "useRef")
+    .replace(/\bReact\.useEffect\b/g, "useEffect")
+    .replace(/\bReact\.useState\b/g, "useState")
+    .replace(/\bReact\.Fragment\b/g, "Fragment")
+    .replace(/\bReact\.ElementRef\b/g, "ElementRef")
+    .replace(/\bReact\.ComponentPropsWithoutRef\b/g, "ComponentPropsWithoutRef")
+    .replace(/\bReact\.ReactElement\b/g, "ReactElement");
+
+  const importLine = needs.length
+    ? `import { ${[...new Set(needs)].join(", ")} } from "react";\n`
+    : "";
+
+  return importLine + modified;
+}
+
+function fixAll() {
+  const files = collectFiles(path.join(__dirname, "src"));
+  let count = 0;
+  for (const file of files) {
+    const content = fs.readFileSync(file, "utf8");
+    const result = transform(content);
+    if (result && result !== content) {
+      fs.writeFileSync(file, result, "utf8");
+      console.log(`✅ Updated: ${file}`);
+      count++;
     }
   }
+  console.log(`\n🎉 Done! ${count} files updated.`);
 }
 
-walk(targetDir);
+fixAll();
