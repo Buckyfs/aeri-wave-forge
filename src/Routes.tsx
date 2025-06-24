@@ -1,20 +1,20 @@
-import React, { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { Routes as RouterRoutes, Route } from 'react-router-dom';
 import { LoadingSpinner } from './components/ui/loading-spinner';
 
 // Lazy load components
-const Index = React.lazy(() => import('./pages/Index'));
-const About = React.lazy(() => import('./pages/About'));
-const GetStarted = React.lazy(() => import('./pages/GetStarted'));
-const Projects = React.lazy(() => import('./pages/Projects'));
-const Community = React.lazy(() => import('./pages/Community'));
-const Impact = React.lazy(() => import('./pages/Impact'));
-const Collaborate = React.lazy(() => import('./pages/Collaborate'));
-const BecomePartner = React.lazy(() => import('./pages/BecomePartner'));
-const ApplyResearcher = React.lazy(() => import('./pages/ApplyResearcher'));
-const Support = React.lazy(() => import('./pages/Support'));
-const BecomeMentor = React.lazy(() => import('./pages/BecomeMentor'));
-const NotFound = React.lazy(() => import('./pages/NotFound'));
+const Index = lazy(() => import('./pages/Index'));
+const About = lazy(() => import('./pages/About'));
+const GetStarted = lazy(() => import('./pages/GetStarted'));
+const Projects = lazy(() => import('./pages/Projects'));
+const Community = lazy(() => import('./pages/Community'));
+const Impact = lazy(() => import('./pages/Impact'));
+const Collaborate = lazy(() => import('./pages/Collaborate'));
+const BecomePartner = lazy(() => import('./pages/BecomePartner'));
+const ApplyResearcher = lazy(() => import('./pages/ApplyResearcher'));
+const Support = lazy(() => import('./pages/Support'));
+const BecomeMentor = lazy(() => import('./pages/BecomeMentor'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading component
 const PageLoader = () => (
