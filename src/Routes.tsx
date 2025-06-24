@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import { Routes as RouterRoutes, Route } from 'react-router-dom';
 import { LoadingSpinner } from './components/ui/loading-spinner';
 
 // Lazy load components
