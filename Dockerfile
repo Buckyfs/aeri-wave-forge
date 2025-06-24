@@ -1,57 +1,34 @@
-# Multi-stage build for production
+# ---------- Stage 1: Build the app ----------
 FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install production dependencies
 COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the Vite app
 RUN npm run build
 
-# Production stage
+
+# ---------- Stage 2: Serve with Nginx ----------
 FROM nginx:alpine AS production
 
-# Copy built assets from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration
+# Copy custom Nginx config if available (optional)
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built assets from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Create health check endpoint
 RUN echo "healthy" > /usr/share/nginx/html/health
 
-# Expose port
+# Expose port 80
 EXPOSE 80
 
-# Start nginx
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
-
-
-# Use Node.js base image instead of nginx
-FROM node:20-alpine
-
-# Set working directory
-WORKDIR /usr/share/nginx/html
-
-# Copy project files
-COPY . .
-
-# Install dependencies
-RUN npm install
-
-# Build the project
-RUN npm run build
-
-# Expose port
-EXPOSE 3000
-
-# Start the server
-CMD ["npm", "run", "dev", "--", "--port", "3000"]
