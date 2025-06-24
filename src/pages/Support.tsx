@@ -1,4 +1,12 @@
-import React from 'react';
+import {
+  forwardRef,
+  useRef,
+  useEffect,
+  useState,
+  ElementRef,
+  ComponentPropsWithoutRef
+} from "react";
+
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
