@@ -1,4 +1,12 @@
-import * as React from "react";
+import {
+  forwardRef,
+  useRef,
+  useEffect,
+  useState,
+  ElementRef,
+  ComponentPropsWithoutRef
+} from "react";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 
