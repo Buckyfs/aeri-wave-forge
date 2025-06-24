@@ -4,18 +4,51 @@ services:
   aeri-wave-forge:
     build:
       context: .
-      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+      cache_from:
+        - node_modules:/app/node_modules  # Cache node_modules between builds
+      commands:
+        # Install dependencies (will use cache if available)
+        - npm ci --prefer-offline
+        - npm run build
+        - mkdir -p /usr/share/nginx/html
+        - echo "healthy" > /usr/share/nginx/html/health
+      publish: /usr/share/nginx/html
+
+    develop:
+      watch:
+        - src/
+        - public/
+      command: npm run dev -- --port 3000
+      volumes:
+        # Persistent node_modules for development
+        - node_modules:/app/node_modules
+        # Bind-mount source code for live reload
+        - ./:/app
+
     environment:
       - NODE_ENV=production
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
       - BASE_URL=${BASE_URL:-/}
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+
+    deploy:
+      publish: /usr/share/nginx/html
+      volumes:
+        # Production persistence
+        - node_modules:/app/node_modules
+        - ./dist:/usr/share/nginx/html
+        - ./nginx.conf:/etc/nginx/nginx.conf
+      ports:
+        - "80:80"
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+
+volumes:
+  node_modules:  # Dedicated volume for node_modules
