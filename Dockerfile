@@ -33,3 +33,25 @@ EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+
+# Use Node.js base image instead of nginx
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /usr/share/nginx/html
+
+# Copy project files
+COPY . .
+
+# Install dependencies
+RUN npm install
+
+# Build the project
+RUN npm run build
+
+# Expose port
+EXPOSE 3000
+
+# Start the server
+CMD ["npm", "run", "dev", "--", "--port", "3000"]
