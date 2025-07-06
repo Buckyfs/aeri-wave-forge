@@ -23,7 +23,7 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Suspense fallback={<div>Loading...</div>}>
-        <BrowserRouter basename="/aeri-wave-forge/">
+        <BrowserRouter>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider defaultTheme="light" storageKey="aeri-theme">
               <AuthProvider>
