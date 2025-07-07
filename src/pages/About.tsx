@@ -38,7 +38,7 @@ const About = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h2>
             <div className="mt-8 prose prose-indigo prose-lg text-gray-500 max-w-4xl">
                             <p className="text-lg leading-relaxed">
-                At The Applied Engineering Research Institute (AERI), we're dedicated to revolutionizing the way digital experiences are created and shared.
+                At Applied Engineering Research Institute (AERI), we're dedicated to revolutionizing the way digital experiences are created and shared.
                 Our platform combines cutting-edge technology with intuitive design tools to empower creators of all skill levels.
               </p>
             </div>
