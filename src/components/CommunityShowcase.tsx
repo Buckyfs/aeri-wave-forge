@@ -49,7 +49,7 @@ const CommunityShowcase = () => {
       name: "Natalie Farquharson",
       role: "Environmental Engineering Student",
       description: "Leading carbon capture membrane research team",
-      image: "/aeri-wave-forge/images/natalie.jpg",
+      image: "/images/natalie.jpg",
       quote: "I never thought I could contribute to climate solutions until I joined AERI. Now I'm leading a project that could impact thousands."
     },
     {

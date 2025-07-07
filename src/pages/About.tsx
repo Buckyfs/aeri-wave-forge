@@ -6,7 +6,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      
+
       {/* Hero Section */}
       <div className="relative min-h-[30vh] bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -17,7 +17,7 @@ const About = () => {
             className="text-center"
           >
             <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl mb-8">
-              About Aeri Wave Forge
+              About The Applied Engineering Research Institute (AERI)
             </h1>
             <p className="mt-8 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:text-xl md:max-w-3xl">
               Empowering creators to build the next generation of digital experiences
@@ -37,8 +37,8 @@ const About = () => {
           >
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h2>
             <div className="mt-8 prose prose-indigo prose-lg text-gray-500 max-w-4xl">
-              <p className="text-lg leading-relaxed">
-                At Aeri Wave Forge, we're dedicated to revolutionizing the way digital experiences are created and shared. 
+                            <p className="text-lg leading-relaxed">
+                At The Applied Engineering Research Institute (AERI), we're dedicated to revolutionizing the way digital experiences are created and shared.
                 Our platform combines cutting-edge technology with intuitive design tools to empower creators of all skill levels.
               </p>
             </div>
@@ -92,7 +92,7 @@ const About = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Vision</h2>
             <div className="mt-8 prose prose-lg max-w-4xl">
               <p className="text-lg text-gray-500 leading-relaxed">
-                We envision a world where creators of all backgrounds can bring their digital ideas to life without technical barriers. 
+                We envision a world where creators of all backgrounds can bring their digital ideas to life without technical barriers.
                 Through our platform, we're building a future where innovation knows no bounds and creativity flows seamlessly from imagination to reality.
               </p>
             </div>

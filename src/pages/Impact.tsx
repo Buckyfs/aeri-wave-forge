@@ -14,7 +14,7 @@ const Impact = () => {
     {
       title: "Digital Art Revolution",
       author: "Sarah Chen",
-      quote: "Aeri Wave Forge transformed how I create and share digital art with my audience.",
+      quote: "The Applied Engineering Research Institute (AERI) transformed how I create and share digital art with my audience.",
       impact: "Reached 1M+ viewers"
     },
     {
@@ -34,7 +34,7 @@ const Impact = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      
+
       {/* Hero Section */}
       <div className="relative min-h-[30vh] bg-gradient-to-br from-green-50 to-blue-50 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
