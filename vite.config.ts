@@ -73,6 +73,6 @@ export default defineConfig(({ command, mode }) => ({
     },
   },
   esbuild: {
-    jsxInject: `import React from 'react'`, // Auto-inject React in JSX files
+    // Removed jsxInject to avoid conflicts with explicit React imports
   },
 }));
