@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface ProjectImageProps {
   src: string;
@@ -22,7 +22,7 @@ const ProjectImage = ({ src, alt, className = '' }: ProjectImageProps) => {
 
   if (imageError) {
     return (
-      <div 
+      <div
         className={`w-full h-full min-h-[200px] bg-gradient-to-br ${getGradientColor()} flex items-center justify-center ${className}`}
       >
         <div className="text-white text-xl font-semibold">{alt}</div>
@@ -40,4 +40,4 @@ const ProjectImage = ({ src, alt, className = '' }: ProjectImageProps) => {
   );
 };
 
-export default ProjectImage; 
+export default ProjectImage;

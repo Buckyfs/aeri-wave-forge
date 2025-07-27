@@ -17,6 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useCreatePartner } from '@/hooks/useDatabase';
 
+
+
 const formSchema = z.object({
   organization_name: z.string().min(2, 'Organization name is required'),
   contact_name: z.string().min(2, 'Contact name is required'),
@@ -45,6 +47,8 @@ export function PartnerForm() {
 
   const onSubmit = async (values: FormData) => {
     try {
+      console.log('Form values:', values);
+
       // Ensure all required fields are present
       const partnerData = {
         organization_name: values.organization_name,
@@ -54,6 +58,10 @@ export function PartnerForm() {
         partnership_type: values.partnership_type,
         message: values.message,
       };
+
+      console.log('Partner data to submit:', partnerData);
+      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('Supabase key exists:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
 
       await createPartner.mutateAsync(partnerData);
       form.reset();
@@ -169,6 +177,10 @@ export function PartnerForm() {
         >
           {createPartner.isPending ? 'Submitting...' : 'Submit Application'}
         </Button>
+
+
+
+
       </form>
     </Form>
   );

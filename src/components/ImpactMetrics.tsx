@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
 interface MetricProps {
@@ -21,7 +21,7 @@ const Metric = ({ value, label, icon, suffix = '', delay = 0 }: MetricProps) => 
           let start = 0;
           const duration = 2000;
           const increment = Math.ceil(value / (duration / 16));
-          
+
           const timer = setInterval(() => {
             start += increment;
             if (start > value) {
@@ -31,10 +31,10 @@ const Metric = ({ value, label, icon, suffix = '', delay = 0 }: MetricProps) => 
               setCount(start);
             }
           }, 16);
-          
+
           return () => clearInterval(timer);
         }, delay);
-        
+
         observer.disconnect();
       }
     }, { threshold: 0.5 });

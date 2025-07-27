@@ -11,14 +11,29 @@ import type {
 export class DatabaseService {
   // Partner operations
   static async createPartner(partner: Omit<Partner, 'id' | 'created_at' | 'status'>): Promise<Partner> {
-    const { data, error } = await supabase
-      .from('partners')
-      .insert([{ ...partner, status: 'pending' }])
-      .select()
-      .single();
+    console.log('DatabaseService.createPartner called with:', partner);
+    console.log('Supabase client:', supabase);
 
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('partners')
+        .insert([{ ...partner, status: 'pending' }])
+        .select()
+        .single();
+
+      console.log('Supabase response:', { data, error });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Successfully created partner:', data);
+      return data;
+    } catch (err) {
+      console.error('Exception in createPartner:', err);
+      throw err;
+    }
   }
 
   static async getPartners(): Promise<Partner[]> {

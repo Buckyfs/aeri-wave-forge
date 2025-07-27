@@ -22,7 +22,7 @@ const formSchema = z.object({
   email: z.string().email('Invalid email address'),
   institution: z.string().min(2, 'Institution is required'),
   research_area: z.string().min(2, 'Research area is required'),
-  cv_url: z.string().url().optional(),
+  cv_url: z.string().url().optional().or(z.literal('')),
   message: z.string().min(10, 'Please provide more details about your research interests'),
 });
 
@@ -42,13 +42,24 @@ export function ResearcherForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await api.submitResearcherApplication(values);
+      // Prepare the data, handling optional cv_url
+      const researcherData = {
+        full_name: values.full_name,
+        email: values.email,
+        institution: values.institution,
+        research_area: values.research_area,
+        cv_url: values.cv_url || undefined,
+        message: values.message,
+      };
+
+      await api.submitResearcherApplication(researcherData);
       toast({
         title: 'Application submitted',
         description: 'We will review your application and get back to you soon.',
       });
       form.reset();
     } catch (error) {
+      console.error('Researcher form submission error:', error);
       toast({
         title: 'Error',
         description: 'There was an error submitting your application. Please try again.',
@@ -151,4 +162,4 @@ export function ResearcherForm() {
       </form>
     </Form>
   );
-} 
+}

@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils"
 
 interface LoadingSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -44,4 +45,4 @@ const LoadingSpinner = ({
   );
 };
 
-export { LoadingSpinner }; 
+export { LoadingSpinner };

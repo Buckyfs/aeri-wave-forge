@@ -22,7 +22,7 @@ const formSchema = z.object({
   email: z.string().email('Invalid email address'),
   expertise: z.string().min(2, 'Area of expertise is required'),
   availability: z.string().min(2, 'Please specify your availability'),
-  linkedin_url: z.string().url().optional(),
+  linkedin_url: z.string().url().optional().or(z.literal('')),
   message: z.string().min(10, 'Please provide more details about your mentoring interests'),
 });
 
@@ -42,13 +42,24 @@ export function MentorForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await api.submitMentorApplication(values);
+      // Prepare the data, handling optional linkedin_url
+      const mentorData = {
+        full_name: values.full_name,
+        email: values.email,
+        expertise: values.expertise,
+        availability: values.availability,
+        linkedin_url: values.linkedin_url || undefined,
+        message: values.message,
+      };
+
+      await api.submitMentorApplication(mentorData);
       toast({
         title: 'Application submitted',
         description: 'We will review your application and get back to you soon.',
       });
       form.reset();
     } catch (error) {
+      console.error('Mentor form submission error:', error);
       toast({
         title: 'Error',
         description: 'There was an error submitting your application. Please try again.',
@@ -109,9 +120,9 @@ export function MentorForm() {
             <FormItem>
               <FormLabel>Availability</FormLabel>
               <FormControl>
-                <Input 
+                <Input
                   placeholder="e.g., 2 hours per week, evenings only"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -154,4 +165,4 @@ export function MentorForm() {
       </form>
     </Form>
   );
-} 
+}

@@ -23,7 +23,7 @@ const formSchema = z.object({
   full_name: z.string().min(2, 'Full name is required'),
   email: z.string().email('Invalid email address'),
   amount: z.number().min(1, 'Amount must be greater than 0'),
-  message: z.string().optional(),
+  message: z.string().optional().or(z.literal('')),
   is_recurring: z.boolean().default(false),
 });
 
@@ -34,7 +34,7 @@ export function SupportForm() {
     defaultValues: {
       full_name: '',
       email: '',
-      amount: 0,
+      amount: 1,
       message: '',
       is_recurring: false,
     },
@@ -42,13 +42,23 @@ export function SupportForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await api.submitDonation(values);
+      // Prepare the data, handling optional message
+      const donationData = {
+        full_name: values.full_name,
+        email: values.email,
+        amount: values.amount,
+        message: values.message || undefined,
+        is_recurring: values.is_recurring,
+      };
+
+      await api.submitDonation(donationData);
       toast({
         title: 'Thank you for your support!',
         description: 'Your donation has been processed successfully.',
       });
       form.reset();
     } catch (error) {
+      console.error('Support form submission error:', error);
       toast({
         title: 'Error',
         description: 'There was an error processing your donation. Please try again.',
@@ -148,4 +158,4 @@ export function SupportForm() {
       </form>
     </Form>
   );
-} 
+}

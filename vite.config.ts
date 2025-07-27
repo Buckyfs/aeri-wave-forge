@@ -17,7 +17,6 @@ export default defineConfig(({ command, mode }) => ({
   },
   plugins: [
     react({
-      jsxImportSource: '@welldone-software/why-did-you-render', // Optional for debugging
       devTarget: 'esnext', // Faster dev builds
     }),
     mode === 'development' && componentTagger(),
@@ -71,11 +70,6 @@ export default defineConfig(({ command, mode }) => ({
   css: {
     modules: {
       localsConvention: 'camelCaseOnly', // Better CSS module classnames
-    },
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@import "@/styles/variables.scss";`, // Global SCSS
-      },
     },
   },
   esbuild: {
