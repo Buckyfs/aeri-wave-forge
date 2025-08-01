@@ -16,7 +16,7 @@ export class DatabaseService {
 
     try {
       const { data, error } = await supabase
-        .from('partner2')
+        .from('partners')
         .insert([{ ...partner, status: 'pending' }])
         .select()
         .single();
@@ -38,7 +38,7 @@ export class DatabaseService {
 
   static async getPartners(): Promise<Partner[]> {
     const { data, error } = await supabase
-      .from('partner2')
+      .from('partners')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -48,7 +48,7 @@ export class DatabaseService {
 
   static async updatePartnerStatus(id: string, status: Partner['status']): Promise<Partner> {
     const { data, error } = await supabase
-      .from('partner2')
+      .from('partners')
       .update({ status })
       .eq('id', id)
       .select()
@@ -151,7 +151,7 @@ export class DatabaseService {
   // Newsletter operations
   static async subscribeToNewsletter(email: string): Promise<Newsletter> {
     const { data, error } = await supabase
-      .from('newsletter2')
+      .from('newsletter')
       .upsert([{ email, subscribed: true }], { onConflict: 'email' })
       .select()
       .single();
@@ -162,7 +162,7 @@ export class DatabaseService {
 
   static async unsubscribeFromNewsletter(email: string): Promise<Newsletter> {
     const { data, error } = await supabase
-      .from('newsletter2')
+      .from('newsletter')
       .update({ subscribed: false })
       .eq('email', email)
       .select()
@@ -174,7 +174,7 @@ export class DatabaseService {
 
   static async getNewsletterSubscribers(): Promise<Newsletter[]> {
     const { data, error } = await supabase
-      .from('newsletter2')
+      .from('newsletter')
       .select('*')
       .eq('subscribed', true)
       .order('created_at', { ascending: false });
@@ -192,11 +192,11 @@ export class DatabaseService {
       { count: mentorsCount },
       { count: newsletterCount }
     ] = await Promise.all([
-      supabase.from('partner2').select('*', { count: 'exact', head: true }),
+      supabase.from('partners').select('*', { count: 'exact', head: true }),
       supabase.from('researchers').select('*', { count: 'exact', head: true }),
       supabase.from('supporters').select('*', { count: 'exact', head: true }),
       supabase.from('mentors').select('*', { count: 'exact', head: true }),
-      supabase.from('newsletter2').select('*', { count: 'exact', head: true }).eq('subscribed', true)
+      supabase.from('newsletter').select('*', { count: 'exact', head: true }).eq('subscribed', true)
     ]);
 
     return {

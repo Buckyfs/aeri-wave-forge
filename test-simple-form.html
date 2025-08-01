@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test Form</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .debug { background: #f0f0f0; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Simple Test Form</h1>
+
+    <div class="debug">
+        <strong>Environment Variables:</strong><br>
+        URL: <span id="url"></span><br>
+        Key: <span id="key"></span>
+    </div>
+
+    <h2>Test 1: Direct Supabase Connection</h2>
+    <button onclick="testDirectConnection()">Test Direct Connection</button>
+    <div id="direct-result"></div>
+
+    <h2>Test 2: Simple Form Submission</h2>
+    <form id="testForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" value="Test User" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="test@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" rows="4">This is a test message</textarea>
+        </div>
+
+        <button type="submit">Submit Test Form</button>
+    </form>
+    <div id="form-result"></div>
+
+    <h2>Test 3: Check Tables</h2>
+    <button onclick="checkTables()">Check All Tables</button>
+    <div id="tables-result"></div>
+
+    <script>
+        // Supabase configuration
+        const supabaseUrl = 'http://supabase.aeri-research.org';
+        const supabaseKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U';
+
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Display environment info
+        document.getElementById('url').textContent = supabaseUrl;
+        document.getElementById('key').textContent = supabaseKey.substring(0, 20) + '...';
+
+        async function testDirectConnection() {
+            const resultDiv = document.getElementById('direct-result');
+            resultDiv.innerHTML = '<div class="debug">Testing direct connection...</div>';
+
+            try {
+                // Test basic connection
+                const { data, error } = await supabase
+                    .from('researchers')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="error">❌ Direct connection failed: ${error.message}</div>`;
+                    console.error('Direct connection error:', error);
+                } else {
+                    resultDiv.innerHTML = `<div class="success">✅ Direct connection successful!</div>`;
+                    console.log('Direct connection successful:', data);
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">❌ Connection error: ${err.message}</div>`;
+                console.error('Connection error:', err);
+            }
+        }
+
+        async function checkTables() {
+            const resultDiv = document.getElementById('tables-result');
+            resultDiv.innerHTML = '<div class="debug">Checking tables...</div>';
+
+            const tables = ['researchers', 'partners', 'supporters', 'mentors', 'newsletter'];
+            let results = '';
+
+            for (const table of tables) {
+                try {
+                    const { data, error } = await supabase
+                        .from(table)
+                        .select('*')
+                        .limit(1);
+
+                    if (error) {
+                        results += `<div class="error">❌ ${table}: ${error.message}</div>`;
+                    } else {
+                        results += `<div class="success">✅ ${table}: Table exists and accessible</div>`;
+                    }
+                } catch (err) {
+                    results += `<div class="error">❌ ${table}: ${err.message}</div>`;
+                }
+            }
+
+            resultDiv.innerHTML = results;
+        }
+
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const resultDiv = document.getElementById('form-result');
+            resultDiv.innerHTML = '<div class="debug">Submitting form...</div>';
+
+            const formData = {
+                full_name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                institution: 'Test Institution',
+                research_area: 'Test Research Area',
+                message: document.getElementById('message').value
+            };
+
+            try {
+                console.log('Submitting data:', formData);
+
+                const { data, error } = await supabase
+                    .from('researchers')
+                    .insert([formData])
+                    .select()
+                    .single();
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="error">❌ Form submission failed: ${error.message}</div>`;
+                    console.error('Form submission error:', error);
+                } else {
+                    resultDiv.innerHTML = `<div class="success">✅ Form submitted successfully! ID: ${data.id}</div>`;
+                    console.log('Form submission successful:', data);
+
+                    // Clean up test data
+                    await supabase
+                        .from('researchers')
+                        .delete()
+                        .eq('email', formData.email);
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">❌ Form submission error: ${err.message}</div>`;
+                console.error('Form submission error:', err);
+            }
+        });
+    </script>
+</body>
+</html>

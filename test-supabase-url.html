@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supabase URL</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .error { color: red; background: #ffe6e6; }
+        .success { color: green; background: #e6ffe6; }
+        .info { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Test Supabase URL Connectivity</h1>
+
+    <div class="test info">
+        <h3>Current Configuration:</h3>
+        <p><strong>URL:</strong> https://supabase.aeri-research.org</p>
+        <p><strong>Key:</strong> eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U</p>
+    </div>
+
+    <div class="test">
+        <h3>Test 1: Basic HTTP Request</h3>
+        <button onclick="testBasicHttp()">Test Basic HTTP</button>
+        <div id="http-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Common Supabase URLs</h3>
+        <button onclick="testCommonUrls()">Test Common URLs</button>
+        <div id="urls-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: Manual URL Test</h3>
+        <input type="text" id="customUrl" placeholder="Enter Supabase URL to test" style="width: 400px; padding: 8px;">
+        <button onclick="testCustomUrl()">Test Custom URL</button>
+        <div id="custom-result"></div>
+    </div>
+
+    <script>
+        async function testBasicHttp() {
+            const resultDiv = document.getElementById('http-result');
+            resultDiv.innerHTML = 'Testing basic HTTP request...';
+
+            try {
+                const response = await fetch('https://supabase.aeri-research.org', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="success">✅ Basic HTTP request successful!</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ HTTP request failed: ${response.status} ${response.statusText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ HTTP request failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testCommonUrls() {
+            const resultDiv = document.getElementById('urls-result');
+            resultDiv.innerHTML = 'Testing common Supabase URL patterns...';
+
+            const testUrls = [
+                'https://supabase.aeri-research.org',
+                'https://aeri-research.supabase.co',
+                'https://supabase.aeri-research.com',
+                'https://aeri-research.org.supabase.co'
+            ];
+
+            let results = '';
+
+            for (const url of testUrls) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+
+                    if (response.ok) {
+                        results += `<div class="success">✅ ${url} - Accessible</div>`;
+                    } else {
+                        results += `<div class="error">❌ ${url} - ${response.status} ${response.statusText}</div>`;
+                    }
+                } catch (error) {
+                    results += `<div class="error">❌ ${url} - ${error.message}</div>`;
+                }
+            }
+
+            resultDiv.innerHTML = results;
+        }
+
+        async function testCustomUrl() {
+            const customUrl = document.getElementById('customUrl').value;
+            const resultDiv = document.getElementById('custom-result');
+
+            if (!customUrl) {
+                resultDiv.innerHTML = '<div class="error">Please enter a URL to test</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = `Testing ${customUrl}...`;
+
+            try {
+                const response = await fetch(customUrl, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">✅ ${customUrl} - Accessible!</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ ${customUrl} - ${response.status} ${response.statusText}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ ${customUrl} - ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
