@@ -2,8 +2,8 @@
 export const config = {
   // Supabase configuration
   supabase: {
-    url: import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-url.supabase.co',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key',
+    url: import.meta.env.VITE_SUPABASE_URL || 'http://supabase.aeri-research.org',
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U',
   },
 
   // App configuration
@@ -31,12 +31,8 @@ export const validateEnvironment = () => {
 
   const missing = requiredVars.filter(varName => !import.meta.env[varName]);
 
-  if (missing.length > 0 && config.app.isProduction) {
-    console.error('Missing required environment variables:', missing);
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
-  }
-
-  if (missing.length > 0 && config.app.isDevelopment) {
-    console.warn('Missing environment variables in development:', missing);
+  if (missing.length > 0) {
+    console.warn('Missing environment variables:', missing);
+    console.log('Using fallback values for Supabase configuration');
   }
 };

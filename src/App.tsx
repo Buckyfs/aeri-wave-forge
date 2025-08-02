@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Routes from './Routes';
+import { DebugPanel } from './components/DebugPanel';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ const App = () => {
                     <Routes />
                     <Toaster />
                     <Sonner />
+                    <DebugPanel />
                   </div>
                 </TooltipProvider>
               </AuthProvider>

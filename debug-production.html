@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Production Debug</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .debug { background: #f0f0f0; padding: 15px; border-radius: 4px; margin: 10px 0; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Production Environment Debug</h1>
+
+    <div class="debug">
+        <h3>Environment Variables Check:</h3>
+        <div id="env-check"></div>
+    </div>
+
+    <div class="debug">
+        <h3>Supabase Connection Test:</h3>
+        <button onclick="testConnection()">Test Supabase Connection</button>
+        <div id="connection-result"></div>
+    </div>
+
+    <div class="debug">
+        <h3>Form Test:</h3>
+        <button onclick="testFormSubmission()">Test Form Submission</button>
+        <div id="form-result"></div>
+    </div>
+
+    <div class="debug">
+        <h3>Console Logs:</h3>
+        <div id="console-logs"></div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logsDiv = document.getElementById('console-logs');
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logsDiv.innerHTML += '<div style="color: blue;">LOG: ' + args.join(' ') + '</div>';
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logsDiv.innerHTML += '<div style="color: red;">ERROR: ' + args.join(' ') + '</div>';
+        };
+
+        // Check environment variables
+        function checkEnvironment() {
+            const envDiv = document.getElementById('env-check');
+
+            // Try to access environment variables (this won't work in browser, but we can check)
+            const url = 'http://supabase.aeri-research.org';
+            const key = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U';
+
+            envDiv.innerHTML = `
+                <p><strong>Supabase URL:</strong> ${url}</p>
+                <p><strong>Supabase Key:</strong> ${key.substring(0, 20)}...</p>
+                <p><strong>Note:</strong> Environment variables are not accessible in browser, but we can test the connection directly.</p>
+            `;
+        }
+
+        // Test Supabase connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = 'Testing connection...';
+
+            const supabaseUrl = 'http://supabase.aeri-research.org';
+            const supabaseKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U';
+
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            try {
+                const { data, error } = await supabase
+                    .from('partners')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="error">❌ Connection failed: ${error.message}</div>`;
+                    console.error('Connection error:', error);
+                } else {
+                    resultDiv.innerHTML = `<div class="success">✅ Connection successful!</div>`;
+                    console.log('Connection successful:', data);
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">❌ Connection error: ${err.message}</div>`;
+                console.error('Connection error:', err);
+            }
+        }
+
+        // Test form submission
+        async function testFormSubmission() {
+            const resultDiv = document.getElementById('form-result');
+            resultDiv.innerHTML = 'Testing form submission...';
+
+            const supabaseUrl = 'http://supabase.aeri-research.org';
+            const supabaseKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U';
+
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            const testData = {
+                organization_name: 'Test Organization',
+                contact_name: 'Test Contact',
+                email: 'test@example.com',
+                partnership_type: 'business',
+                message: 'This is a test submission from production'
+            };
+
+            try {
+                console.log('Submitting test data:', testData);
+
+                const { data, error } = await supabase
+                    .from('partners')
+                    .insert([testData])
+                    .select()
+                    .single();
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="error">❌ Form submission failed: ${error.message}</div>`;
+                    console.error('Form submission error:', error);
+                } else {
+                    resultDiv.innerHTML = `<div class="success">✅ Form submission successful! ID: ${data.id}</div>`;
+                    console.log('Form submission successful:', data);
+
+                    // Clean up test data
+                    await supabase
+                        .from('partners')
+                        .delete()
+                        .eq('email', 'test@example.com');
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">❌ Form submission error: ${err.message}</div>`;
+                console.error('Form submission error:', err);
+            }
+        }
+
+        // Initialize
+        checkEnvironment();
+    </script>
+</body>
+</html>
