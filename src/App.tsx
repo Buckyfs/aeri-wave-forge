@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Routes from './Routes';
-import { DebugPanel } from './components/DebugPanel';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -29,12 +28,11 @@ const App = () => {
             <ThemeProvider defaultTheme="light" storageKey="aeri-theme">
               <AuthProvider>
                 <TooltipProvider>
-                  <div className="min-h-screen">
-                    <Routes />
-                    <Toaster />
-                    <Sonner />
-                    <DebugPanel />
-                  </div>
+                                      <div className="min-h-screen">
+                      <Routes />
+                      <Toaster />
+                      <Sonner />
+                    </div>
                 </TooltipProvider>
               </AuthProvider>
             </ThemeProvider>
