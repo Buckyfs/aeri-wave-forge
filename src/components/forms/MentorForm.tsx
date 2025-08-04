@@ -53,11 +53,27 @@ export function MentorForm() {
       };
 
       await api.submitMentorApplication(mentorData);
-      toast({
-        title: 'Application submitted',
-        description: 'We will review your application and get back to you soon.',
-      });
       form.reset();
+      
+      // Show success message
+      const formElement = document.querySelector('form');
+      if (formElement) {
+        formElement.style.display = 'none';
+        const successDiv = document.createElement('div');
+        successDiv.className = 'fixed inset-0 flex items-center justify-center';
+        successDiv.innerHTML = `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Application submitted</h3>
+            <p class="text-gray-600 dark:text-gray-300">We will review your mentor application and get back to you soon.</p>
+            <div class="mt-6 flex justify-end">
+              <button onclick="window.location.href='/'" class="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">
+                Return Home
+              </button>
+            </div>
+          </div>
+        `;
+        formElement.parentElement?.appendChild(successDiv);
+      }
     } catch (error) {
       console.error('Mentor form submission error:', error);
       toast({
