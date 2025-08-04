@@ -3,7 +3,7 @@ export const config = {
   // Supabase configuration
   supabase: {
     url: import.meta.env.VITE_SUPABASE_URL || 'https://supabase.aeri-research.org',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1Mzg4MDEwMCwiZXhwIjo0OTA5NTUzNzAwLCJyb2xlIjoiYW5vbiJ9.y-l9Zkfd4FTm_JakQne7p3r42xMZeZG0guRg8wUyE1U',
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzU0MTkzNjAwLCJleHAiOjE5MTE5NjAwMDB9.wquwNJn2ZZXoyzaffg4B_KySI9gNRgdbrPBGJ1Rvr8k',
   },
 
   // App configuration
