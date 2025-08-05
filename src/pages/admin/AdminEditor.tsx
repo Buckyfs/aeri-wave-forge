@@ -93,8 +93,15 @@ export default function AdminEditor() {
   const getSectionTitle = (section: string) => {
     const titles: Record<string, string> = {
       'hero': 'Hero Section',
-      'about': 'About Section', 
-      'impact': 'Impact Metrics',
+      'about': 'About Page',
+      'projects': 'Projects Page',
+      'exploring': 'Currently Exploring',
+      'innovators': 'Meet Our Innovators',
+      'community': 'Community Page',
+      'impact': 'Impact Page',
+      'collab': 'Collaborate With Us',
+      'getstarted': 'Get Started Page',
+      'mark': 'Ready to Make Your Mark',
       'footer': 'Footer Content'
     };
     return titles[section] || section;
@@ -103,8 +110,15 @@ export default function AdminEditor() {
   const getSectionDescription = (section: string) => {
     const descriptions: Record<string, string> = {
       'hero': 'Edit the main banner content that visitors see first',
-      'about': 'Manage information about AERI and your mission',
-      'impact': 'Update statistics and impact numbers',
+      'about': 'Manage About page content, mission, and values',
+      'projects': 'Edit Projects page titles and descriptions',
+      'exploring': 'Modify the research projects section on homepage',
+      'innovators': 'Update the innovators section on homepage',
+      'community': 'Edit Community page content and highlights',
+      'impact': 'Update impact page statistics and success stories',
+      'collab': 'Modify the collaboration section on homepage',
+      'getstarted': 'Edit Get Started page content and pathways',
+      'mark': 'Update the call-to-action section on homepage',
       'footer': 'Modify footer text and contact information'
     };
     return descriptions[section] || 'Edit content for this section';

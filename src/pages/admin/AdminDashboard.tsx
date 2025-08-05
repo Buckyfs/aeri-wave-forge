@@ -65,17 +65,66 @@ export default function AdminDashboard() {
     },
     {
       key: 'about',
-      title: 'About Section',
-      description: 'About page and company information',
+      title: 'About Page',
+      description: 'About page content and mission',
       icon: FileText,
       items: content.filter(item => item.section_key.startsWith('about_'))
     },
     {
+      key: 'projects',
+      title: 'Projects Page',
+      description: 'Projects page titles and descriptions',
+      icon: FileText,
+      items: content.filter(item => item.section_key.startsWith('projects_'))
+    },
+    {
+      key: 'exploring',
+      title: 'Currently Exploring',
+      description: 'Homepage research projects section',
+      icon: FileText,
+      items: content.filter(item => item.section_key.startsWith('exploring_'))
+    },
+    {
+      key: 'innovators',
+      title: 'Meet Our Innovators',
+      description: 'Homepage innovators section',
+      icon: Users,
+      items: content.filter(item => item.section_key.startsWith('innovators_'))
+    },
+    {
+      key: 'community',
+      title: 'Community Page',
+      description: 'Community page content',
+      icon: Users,
+      items: content.filter(item => item.section_key.startsWith('community_'))
+    },
+    {
       key: 'impact',
-      title: 'Impact Metrics',
-      description: 'Statistics and impact numbers',
+      title: 'Impact Page',
+      description: 'Global impact page with statistics',
       icon: TrendingUp,
       items: content.filter(item => item.section_key.startsWith('impact_'))
+    },
+    {
+      key: 'collab',
+      title: 'Collaborate With Us',
+      description: 'Homepage collaboration section',
+      icon: Users,
+      items: content.filter(item => item.section_key.startsWith('collab_'))
+    },
+    {
+      key: 'getstarted',
+      title: 'Get Started Page',
+      description: 'Get started page content',
+      icon: FileText,
+      items: content.filter(item => item.section_key.startsWith('getstarted_'))
+    },
+    {
+      key: 'mark',
+      title: 'Ready to Make Your Mark',
+      description: 'Homepage call-to-action section',
+      icon: FileText,
+      items: content.filter(item => item.section_key.startsWith('mark_'))
     },
     {
       key: 'footer',
