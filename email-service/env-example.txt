@@ -1,0 +1,25 @@
+# AERI Email Service Configuration
+
+# Supabase Configuration
+SUPABASE_URL=https://supabase.aeri-research.org
+SUPABASE_SERVICE_KEY=your_service_key_here
+
+# Email Configuration (Choose one option)
+
+# Option 1: Gmail (easiest for testing)
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password  # Generate this in Gmail settings
+EMAIL_FROM=AERI Website <your-email@gmail.com>
+
+# Option 2: SendGrid
+# SENDGRID_API_KEY=your_sendgrid_api_key
+
+# Option 3: Custom SMTP
+# SMTP_HOST=smtp.your-provider.com
+# SMTP_PORT=587
+# SMTP_USER=your_smtp_user
+# SMTP_PASS=your_smtp_password
+
+# Notification Settings
+NOTIFICATION_EMAIL=natalie@aeri-research.org
+PORT=3001
