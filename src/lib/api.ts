@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Partner, Researcher, Supporter, Mentor, Newsletter } from '@/types/database';
+import type { Partner, Researcher, Supporter, Mentor, Newsletter, CMSContent } from '@/types/database';
 
 export const api = {
   // Partner functions

@@ -16,6 +16,11 @@ const Support = lazy(() => import('./pages/Support'));
 const BecomeMentor = lazy(() => import('./pages/BecomeMentor'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// Admin routes
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminEditor = lazy(() => import('./pages/admin/AdminEditor'));
+
 // Loading component
 const PageLoader = () => (
   <LoadingSpinner size="lg" variant="primary" fullScreen />
@@ -35,6 +40,12 @@ const Routes = () => {
       <Route path="/apply-researcher" element={<Suspense fallback={<PageLoader />}><ApplyResearcher /></Suspense>} />
       <Route path="/support" element={<Suspense fallback={<PageLoader />}><Support /></Suspense>} />
       <Route path="/become-mentor" element={<Suspense fallback={<PageLoader />}><BecomeMentor /></Suspense>} />
+      
+      {/* Admin routes */}
+      <Route path="/admin/login" element={<Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>} />
+      <Route path="/admin/dashboard" element={<Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>} />
+      <Route path="/admin/edit/:section" element={<Suspense fallback={<PageLoader />}><AdminEditor /></Suspense>} />
+      
       <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
     </RouterRoutes>
   );
