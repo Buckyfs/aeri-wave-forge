@@ -1,184 +1,110 @@
-import {
-  forwardRef,
-  useRef,
-  useEffect,
-  useState,
-  ElementRef,
-  ComponentPropsWithoutRef
-} from "react";
-
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { api } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-
-const formSchema = z.object({
-  full_name: z.string().min(2, 'Full name is required'),
-  email: z.string().email('Invalid email address'),
-  expertise: z.string().min(2, 'Area of expertise is required'),
-  availability: z.string().min(2, 'Please specify your availability'),
-  linkedin_url: z.string().url().optional().or(z.literal('')),
-  message: z.string().min(10, 'Please provide more details about your mentoring interests'),
-});
 
 export function MentorForm() {
-  const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      full_name: '',
-      email: '',
-      expertise: '',
-      availability: '',
-      linkedin_url: '',
-      message: '',
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // Prepare the data, handling optional linkedin_url
-      const mentorData = {
-        full_name: values.full_name,
-        email: values.email,
-        expertise: values.expertise,
-        availability: values.availability,
-        linkedin_url: values.linkedin_url || undefined,
-        message: values.message,
-      };
-
-      await api.submitMentorApplication(mentorData);
-      form.reset();
-      
-      // Show success message
-      const formElement = document.querySelector('form');
-      if (formElement) {
-        formElement.style.display = 'none';
-        const successDiv = document.createElement('div');
-        successDiv.className = 'fixed inset-0 flex items-center justify-center';
-        successDiv.innerHTML = `
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Application submitted</h3>
-            <p class="text-gray-600 dark:text-gray-300">We will review your mentor application and get back to you soon.</p>
-            <div class="mt-6 flex justify-end">
-              <button onclick="window.location.href='/'" class="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">
-                Return Home
-              </button>
-            </div>
-          </div>
-        `;
-        formElement.parentElement?.appendChild(successDiv);
-      }
-    } catch (error) {
-      console.error('Mentor form submission error:', error);
-      toast({
-        title: 'Error',
-        description: 'There was an error submitting your application. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
+    <form action="https://formspree.io/f/meozrzzr" method="POST" className="space-y-6">
+      <div>
+        <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Full Name
+        </label>
+        <Input
+          id="full_name"
           name="full_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="text"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Email
+        </label>
+        <Input
+          id="email"
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="email"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="expertise"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Area of Expertise</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="profession" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Profession/Current Role
+        </label>
+        <Input
+          id="profession"
+          name="profession"
+          type="text"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
+      <div>
+        <label htmlFor="experience_years" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Years of Experience
+        </label>
+        <select
+          id="experience_years"
+          name="experience_years"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select experience level</option>
+          <option value="1-3">1-3 years</option>
+          <option value="4-7">4-7 years</option>
+          <option value="8-15">8-15 years</option>
+          <option value="15+">15+ years</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="expertise_areas" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Areas of Expertise
+        </label>
+        <Textarea
+          id="expertise_areas"
+          name="expertise_areas"
+          placeholder="Describe your areas of expertise and specializations"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="motivation" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Why do you want to mentor young researchers?
+        </label>
+        <Textarea
+          id="motivation"
+          name="motivation"
+          placeholder="Tell us about your motivation to mentor and guide young researchers"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="availability" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Availability
+        </label>
+        <select
+          id="availability"
           name="availability"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Availability</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="e.g., 2 hours per week, evenings only"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select your availability</option>
+          <option value="1-2 hours/week">1-2 hours per week</option>
+          <option value="3-5 hours/week">3-5 hours per week</option>
+          <option value="6-10 hours/week">6-10 hours per week</option>
+          <option value="flexible">Flexible</option>
+        </select>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="linkedin_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>LinkedIn Profile URL (Optional)</FormLabel>
-              <FormControl>
-                <Input type="url" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Why do you want to mentor?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us about your experience and how you'd like to help others"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full">Submit Application</Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full">
+        Submit Mentor Application
+      </Button>
+    </form>
   );
 }

@@ -1,161 +1,109 @@
-import {
-  forwardRef,
-  useRef,
-  useEffect,
-  useState,
-  ElementRef,
-  ComponentPropsWithoutRef
-} from "react";
-
-
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
-import { api } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-
-const formSchema = z.object({
-  full_name: z.string().min(2, 'Full name is required'),
-  email: z.string().email('Invalid email address'),
-  amount: z.number().min(1, 'Amount must be greater than 0'),
-  message: z.string().optional().or(z.literal('')),
-  is_recurring: z.boolean().default(false),
-});
 
 export function SupportForm() {
-  const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      full_name: '',
-      email: '',
-      amount: 1,
-      message: '',
-      is_recurring: false,
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // Prepare the data, handling optional message
-      const donationData = {
-        full_name: values.full_name,
-        email: values.email,
-        amount: values.amount,
-        message: values.message || undefined,
-        is_recurring: values.is_recurring,
-      };
-
-      await api.submitDonation(donationData);
-      toast({
-        title: 'Thank you for your support!',
-        description: 'Your donation has been processed successfully.',
-      });
-      form.reset();
-    } catch (error) {
-      console.error('Support form submission error:', error);
-      toast({
-        title: 'Error',
-        description: 'There was an error processing your donation. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
+    <form action="https://formspree.io/f/meozrzzr" method="POST" className="space-y-6">
+      <div>
+        <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Full Name
+        </label>
+        <Input
+          id="full_name"
           name="full_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="text"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Email
+        </label>
+        <Input
+          id="email"
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="email"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount ($)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min="1"
-                  step="1"
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  value={field.value}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Phone (Optional)
+        </label>
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="is_recurring"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Monthly Donation</FormLabel>
-                <FormMessage />
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="support_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          How would you like to support us?
+        </label>
+        <select
+          id="support_type"
+          name="support_type"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select support type</option>
+          <option value="financial">Financial Support</option>
+          <option value="volunteer">Volunteer Time</option>
+          <option value="resources">Provide Resources</option>
+          <option value="mentorship">Mentorship</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="organization" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Organization (Optional)
+        </label>
+        <Input
+          id="organization"
+          name="organization"
+          type="text"
         />
+      </div>
 
-        <FormField
-          control={form.control}
+      <div>
+        <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Message
+        </label>
+        <Textarea
+          id="message"
           name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Message (Optional)</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Leave a message with your donation"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          placeholder="Tell us more about how you'd like to support AERI and our mission"
+          required
         />
+      </div>
 
-        <Button type="submit" className="w-full">Make Donation</Button>
-      </form>
-    </Form>
+      <div>
+        <label htmlFor="involvement_level" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Preferred Level of Involvement
+        </label>
+        <select
+          id="involvement_level"
+          name="involvement_level"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select involvement level</option>
+          <option value="one-time">One-time Support</option>
+          <option value="occasional">Occasional Support</option>
+          <option value="regular">Regular Support</option>
+          <option value="board-member">Board Member Interest</option>
+        </select>
+      </div>
+
+      <Button type="submit" className="w-full">
+        Submit Support Application
+      </Button>
+    </form>
   );
 }

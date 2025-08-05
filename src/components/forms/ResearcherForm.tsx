@@ -1,181 +1,122 @@
-import {
-  forwardRef,
-  useRef,
-  useEffect,
-  useState,
-  ElementRef,
-  ComponentPropsWithoutRef
-} from "react";
-
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { api } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-
-const formSchema = z.object({
-  full_name: z.string().min(2, 'Full name is required'),
-  email: z.string().email('Invalid email address'),
-  institution: z.string().min(2, 'Institution is required'),
-  research_area: z.string().min(2, 'Research area is required'),
-  cv_url: z.string().url().optional().or(z.literal('')),
-  message: z.string().min(10, 'Please provide more details about your research interests'),
-});
 
 export function ResearcherForm() {
-  const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      full_name: '',
-      email: '',
-      institution: '',
-      research_area: '',
-      cv_url: '',
-      message: '',
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // Prepare the data, handling optional cv_url
-      const researcherData = {
-        full_name: values.full_name,
-        email: values.email,
-        institution: values.institution,
-        research_area: values.research_area,
-        cv_url: values.cv_url || undefined,
-        message: values.message,
-      };
-
-      await api.submitResearcherApplication(researcherData);
-      form.reset();
-      
-      // Show success message
-      const formElement = document.querySelector('form');
-      if (formElement) {
-        formElement.style.display = 'none';
-        const successDiv = document.createElement('div');
-        successDiv.className = 'fixed inset-0 flex items-center justify-center';
-        successDiv.innerHTML = `
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Application submitted</h3>
-            <p class="text-gray-600 dark:text-gray-300">We will review your researcher application and get back to you soon.</p>
-            <div class="mt-6 flex justify-end">
-              <button onclick="window.location.href='/'" class="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">
-                Return Home
-              </button>
-            </div>
-          </div>
-        `;
-        formElement.parentElement?.appendChild(successDiv);
-      }
-    } catch (error) {
-      console.error('Researcher form submission error:', error);
-      toast({
-        title: 'Error',
-        description: 'There was an error submitting your application. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
+    <form action="https://formspree.io/f/meozrzzr" method="POST" className="space-y-6">
+      <div>
+        <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Full Name
+        </label>
+        <Input
+          id="full_name"
           name="full_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="text"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Email
+        </label>
+        <Input
+          id="email"
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="email"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="institution"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Institution</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="age" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Age
+        </label>
+        <Input
+          id="age"
+          name="age"
+          type="number"
+          min="13"
+          max="30"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="research_area"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Research Area</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="education_level" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Current Education Level
+        </label>
+        <select
+          id="education_level"
+          name="education_level"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select your education level</option>
+          <option value="high_school">High School</option>
+          <option value="undergraduate">Undergraduate</option>
+          <option value="graduate">Graduate</option>
+          <option value="postgrad">Post-Graduate</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="research_interests" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Research Interests
+        </label>
+        <Textarea
+          id="research_interests"
+          name="research_interests"
+          placeholder="Describe your research interests and areas you'd like to explore"
+          required
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="cv_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CV/Resume URL (Optional)</FormLabel>
-              <FormControl>
-                <Input type="url" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="previous_experience" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Previous Research Experience
+        </label>
+        <Textarea
+          id="previous_experience"
+          name="previous_experience"
+          placeholder="Describe any previous research experience, projects, or relevant background"
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Research Interests</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us about your research interests and how you'd like to contribute"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div>
+        <label htmlFor="project_idea" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Project Idea or Research Question
+        </label>
+        <Textarea
+          id="project_idea"
+          name="project_idea"
+          placeholder="Share any specific project ideas or research questions you'd like to pursue"
         />
+      </div>
 
-        <Button type="submit" className="w-full">Submit Application</Button>
-      </form>
-    </Form>
+      <div>
+        <label htmlFor="time_commitment" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Time Commitment
+        </label>
+        <select
+          id="time_commitment"
+          name="time_commitment"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          required
+        >
+          <option value="">Select your available time commitment</option>
+          <option value="2-5 hours/week">2-5 hours per week</option>
+          <option value="6-10 hours/week">6-10 hours per week</option>
+          <option value="11-20 hours/week">11-20 hours per week</option>
+          <option value="20+ hours/week">20+ hours per week</option>
+        </select>
+      </div>
+
+      <Button type="submit" className="w-full">
+        Submit Research Application
+      </Button>
+    </form>
   );
 }

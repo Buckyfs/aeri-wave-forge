@@ -12,7 +12,7 @@ From your **docker-compose.yml** or Supabase config, find:
 POSTGRES_HOST=localhost (or your server IP)
 POSTGRES_PORT=5432
 POSTGRES_DB=postgres
-POSTGRES_USER=postgres  
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your-password
 ```
 

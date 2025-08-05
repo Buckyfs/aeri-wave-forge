@@ -141,14 +141,14 @@ const createEmailTemplate = (table, data) => {
 async function sendNotificationEmail(table, record) {
   try {
     const emailData = createEmailTemplate(table, record);
-    
+
     const mailOptions = {
       from: `AERI Website <${process.env.EMAIL_USER}>`,
       to: process.env.NOTIFICATION_EMAIL,
       subject: emailData.subject,
       html: emailData.html
     };
-    
+
     const result = await transporter.sendMail(mailOptions);
     console.log(`✅ Email sent for ${table} submission:`, result.messageId);
     return true;
@@ -161,25 +161,25 @@ async function sendNotificationEmail(table, record) {
 // Polling function using direct database queries
 async function pollForNewSubmissions() {
   const tables = ['partners', 'researchers', 'mentors', 'supporters', 'newsletter'];
-  
+
   for (const table of tables) {
     try {
       // Query database directly for records from last 2 minutes
       const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
-      
+
       const query = `
-        SELECT * FROM ${table} 
-        WHERE created_at >= $1 
+        SELECT * FROM ${table}
+        WHERE created_at >= $1
         ORDER BY created_at DESC
       `;
-      
+
       const result = await pool.query(query, [twoMinutesAgo]);
-      
+
       // Send email for each new record
       for (const record of result.rows) {
         await sendNotificationEmail(table, record);
       }
-      
+
     } catch (error) {
       console.error(`Error querying ${table}:`, error);
     }
@@ -196,7 +196,7 @@ app.get('/test-email', async (req, res) => {
       research_area: 'AI Testing',
       message: 'This is a test email from the AERI notification system.'
     };
-    
+
     const success = await sendNotificationEmail('researchers', testData);
     res.json({ success, message: success ? 'Test email sent!' : 'Failed to send email' });
   } catch (error) {
@@ -206,8 +206,8 @@ app.get('/test-email', async (req, res) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     service: 'AERI Email Service (Direct DB)',
     timestamp: new Date().toISOString()
   });
@@ -227,7 +227,7 @@ app.get('/test-db', async (req, res) => {
 app.listen(PORT, async () => {
   console.log(`🚀 AERI Email Service (Direct DB) running on port ${PORT}`);
   console.log(`📧 Notification emails will be sent to: ${process.env.NOTIFICATION_EMAIL}`);
-  
+
   // Test database connection
   try {
     await pool.query('SELECT NOW()');
@@ -235,9 +235,9 @@ app.listen(PORT, async () => {
   } catch (error) {
     console.error(`❌ Database connection failed:`, error.message);
   }
-  
+
   console.log(`🔄 Polling for new submissions every 30 seconds...`);
-  
+
   // Start polling
   pollForNewSubmissions();
   setInterval(pollForNewSubmissions, 30000);

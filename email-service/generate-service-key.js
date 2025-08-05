@@ -21,7 +21,7 @@ console.log(`SUPABASE_SERVICE_KEY=${serviceKey}`);
 // Also generate an anon key for reference
 const anonPayload = {
   role: 'anon',
-  iss: 'supabase', 
+  iss: 'supabase',
   iat: Math.floor(Date.now() / 1000),
   exp: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60)
 };
