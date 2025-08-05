@@ -1,13 +1,4 @@
-import React from 'react'import {
-  forwardRef,
-  useRef,
-  useEffect,
-  useState,
-  ElementRef,
-  ComponentPropsWithoutRef
-} from "react";
-
-
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -35,24 +26,33 @@ export function NewsletterForm() {
       await api.subscribeToNewsletter(values.email);
       form.reset();
       
-      // Show success message
-      const formElement = document.querySelector('form');
-      if (formElement) {
-        formElement.style.display = 'none';
-        const successDiv = document.createElement('div');
-        successDiv.className = 'fixed inset-0 flex items-center justify-center';
-        successDiv.innerHTML = `
+      // Show success message - find the specific newsletter form
+      const newsletterForm = document.querySelector('form[data-newsletter-form]') || document.querySelector('form');
+      if (newsletterForm) {
+        // Create overlay that covers the entire viewport
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        overlay.innerHTML = `
           <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Successfully Subscribed!</h3>
-            <p class="text-gray-600 dark:text-gray-300">Thank you for subscribing to our newsletter. You'll receive updates about our latest research and events.</p>
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Subscribed!</h3>
+            <p class="text-gray-600 dark:text-gray-300">You have been successfully subscribed to our newsletter.</p>
             <div class="mt-6 flex justify-end">
-              <button onclick="window.location.href='/'" class="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">
-                Return Home
+              <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">
+                Close
               </button>
             </div>
           </div>
         `;
-        formElement.parentElement?.appendChild(successDiv);
+        
+        // Add to body instead of form parent to ensure it's visible
+        document.body.appendChild(overlay);
+        
+        // Remove overlay when clicking outside
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) {
+            overlay.remove();
+          }
+        });
       }
     } catch (error) {
       toast({
@@ -65,7 +65,7 @@ export function NewsletterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2" data-newsletter-form>
         <FormField
           control={form.control}
           name="email"
