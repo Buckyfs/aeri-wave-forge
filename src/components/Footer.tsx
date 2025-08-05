@@ -1,7 +1,17 @@
 import { ArrowRight } from "lucide-react";
+import { useCMSContentItem, getCMSContentValue } from '@/hooks/useCMSContent';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
+  // Fetch CMS content for footer
+  const { content: orgName } = useCMSContentItem('footer_org_name');
+  const { content: orgFullName } = useCMSContentItem('footer_org_full_name');
+  const { content: description } = useCMSContentItem('footer_description');
+  const { content: address } = useCMSContentItem('footer_contact_address');
+  const { content: city } = useCMSContentItem('footer_contact_city');
+  const { content: country } = useCMSContentItem('footer_contact_country');
+  const { content: email } = useCMSContentItem('footer_contact_email');
 
   return (
     <footer className="bg-white border-t border-gray-200">
@@ -10,11 +20,15 @@ const Footer = () => {
           {/* Logo and description */}
           <div className="col-span-1 md:col-span-1">
             <div className="text-primary font-heading mb-4">
-              <span className="text-xl font-bold tracking-tighter">AERI</span>
-              <span className="block text-xs tracking-wide text-gray-600 mt-1">APPLIED ENGINEERING RESEARCH INSTITUTE</span>
+              <span className="text-xl font-bold tracking-tighter">
+                {getCMSContentValue(orgName, 'AERI')}
+              </span>
+              <span className="block text-xs tracking-wide text-gray-600 mt-1">
+                {getCMSContentValue(orgFullName, 'APPLIED ENGINEERING RESEARCH INSTITUTE')}
+              </span>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-              Empowering the next generation of innovators to solve environmental challenges through applied engineering research.
+              {getCMSContentValue(description, 'Empowering the next generation of innovators to solve environmental challenges through applied engineering research.')}
             </p>
           </div>
           
@@ -53,10 +67,18 @@ const Footer = () => {
           <div>
             <h3 className="font-heading text-sm font-semibold mb-4 text-primary">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-sm text-gray-600">8300 Wisconsin Ave</li>
-              <li className="text-sm text-gray-600">Bethesda, MD 20814</li>
-              <li className="text-sm text-gray-600">United States</li>
-              <li className="text-sm text-gray-600">contact@aeri-research.org</li>
+              <li className="text-sm text-gray-600">
+                {getCMSContentValue(address, '8300 Wisconsin Ave')}
+              </li>
+              <li className="text-sm text-gray-600">
+                {getCMSContentValue(city, 'Bethesda, MD 20814')}
+              </li>
+              <li className="text-sm text-gray-600">
+                {getCMSContentValue(country, 'United States')}
+              </li>
+              <li className="text-sm text-gray-600">
+                {getCMSContentValue(email, 'contact@aeri-research.org')}
+              </li>
             </ul>
             <div className="flex space-x-4 mt-4">
               <a href="#" className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:border-primary hover:text-primary transition-colors">
