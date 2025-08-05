@@ -1,33 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { ActionButton } from '@/components/ui/action-button';
-import { useSubscribeToNewsletter } from '@/hooks/useDatabase';
 
 const CtaSection = () => {
-  const [email, setEmail] = useState('');
-  const subscribeToNewsletter = useSubscribeToNewsletter();
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate email
-    if (!email || !email.includes('@')) {
-      return;
-    }
-
-    try {
-      // Save to Supabase using the hook
-      await subscribeToNewsletter.mutateAsync(email);
-
-      // Reset form on success
-      setEmail("");
-    } catch (error) {
-      // Error handling is done in the hook
-      console.error('Newsletter subscription error:', error);
-    }
-  };
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -78,20 +55,19 @@ const CtaSection = () => {
               Subscribe to our newsletter for project updates, research breakthroughs, and community achievements.
             </p>
 
-            <form onSubmit={handleSubscribe} className="flex flex-col md:flex-row gap-4">
+            <form action="https://formspree.io/f/meozrzzr" method="POST" className="flex flex-col md:flex-row gap-4">
               <Input
                 type="email"
+                name="email"
                 placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="bg-white/20 border-0 text-white placeholder:text-white/60 focus-visible:ring-secondary"
+                required
               />
               <Button
                 type="submit"
                 className="bg-secondary text-primary hover:bg-secondary/90"
-                disabled={subscribeToNewsletter.isPending}
               >
-                {subscribeToNewsletter.isPending ? 'Subscribing...' : 'Subscribe'}
+                Subscribe
               </Button>
             </form>
           </div>
