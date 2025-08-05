@@ -30,7 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_cms_content_published ON cms_content(is_published
 CREATE INDEX IF NOT EXISTS idx_cms_admins_email ON cms_admins(email);
 
 -- Insert default content for the website - COMPREHENSIVE COVERAGE
-INSERT INTO cms_content (section_key, content_type, title, content) VALUES 
+INSERT INTO cms_content (section_key, content_type, title, content) VALUES
 
 -- Hero Section (Homepage)
 ('hero_title', 'text', 'Hero Main Title', 'Advancing Ethical AI Research'),

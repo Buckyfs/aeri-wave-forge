@@ -3,7 +3,7 @@ import { useCMSContentItem, getCMSContentValue } from '@/hooks/useCMSContent';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
+
   // Fetch CMS content for footer
   const { content: orgName } = useCMSContentItem('footer_org_name');
   const { content: orgFullName } = useCMSContentItem('footer_org_full_name');
@@ -31,7 +31,7 @@ const Footer = () => {
               {getCMSContentValue(description, 'Empowering the next generation of innovators to solve environmental challenges through applied engineering research.')}
             </p>
           </div>
-          
+
           {/* Quick Links */}
           <div>
             <h3 className="font-heading text-sm font-semibold mb-4 text-primary">Quick Links</h3>
@@ -43,7 +43,7 @@ const Footer = () => {
               <li><a href="#collaborate" className="text-sm text-gray-600 hover:text-primary transition-colors">Collaborate</a></li>
             </ul>
           </div>
-          
+
           {/* Resources */}
           <div>
             <h3 className="font-heading text-sm font-semibold mb-4 text-primary">Resources</h3>
@@ -62,7 +62,7 @@ const Footer = () => {
               </a></li>
             </ul>
           </div>
-          
+
           {/* Contact */}
           <div>
             <h3 className="font-heading text-sm font-semibold mb-4 text-primary">Contact</h3>
@@ -93,7 +93,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-200 mt-12 pt-8">
           <p className="text-sm text-gray-600 text-center">&copy; {currentYear} AERI. All rights reserved.</p>
         </div>
