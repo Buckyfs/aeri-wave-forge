@@ -9,7 +9,7 @@
 
 ### Step 2: Configure Gmail
 1. **Enable 2FA**: Go to https://myaccount.google.com/security
-2. **Create App Password**: 
+2. **Create App Password**:
    - Security → App passwords
    - Select "Mail" and "Other"
    - Name it "AERI Website"
@@ -73,7 +73,7 @@ pm2 save
 
 ## 🚨 Troubleshooting
 
-**Gmail Authentication Error**: 
+**Gmail Authentication Error**:
 - Make sure 2FA is enabled
 - Use App Password, not regular password
 - Check Gmail allows "less secure apps" (if needed)

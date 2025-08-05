@@ -1,6 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
-const { createClient } = require('@supabase/supabase-js');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
@@ -8,22 +8,26 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
+// PostgreSQL connection (direct to your Supabase database)
+const pool = new Pool({
+  host: process.env.DB_HOST,           // Your Supabase host
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME,       // Usually 'postgres'
+  user: process.env.DB_USER,           // Usually 'postgres'
+  password: process.env.DB_PASSWORD,   // Your database password
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+});
+
 // Email transporter (Gmail configuration)
 const transporter = nodemailer.createTransporter({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,    // Your Gmail address
-    pass: process.env.EMAIL_PASS     // Your Gmail App Password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
-// Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
-// Email templates
+// Email templates (same as before)
 const createEmailTemplate = (table, data) => {
   switch (table) {
     case 'partners':
@@ -34,10 +38,10 @@ const createEmailTemplate = (table, data) => {
             <h2 style="color: #1e40af;">New Partnership Application</h2>
             <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <p><strong>Organization:</strong> ${data.organization_name}</p>
-              <p><strong>Contact Person:</strong> ${data.contact_name}</p>
+              <p><strong>Contact:</strong> ${data.contact_name}</p>
               <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
               <p><strong>Phone:</strong> ${data.phone || 'Not provided'}</p>
-              <p><strong>Partnership Type:</strong> ${data.partnership_type}</p>
+              <p><strong>Type:</strong> ${data.partnership_type}</p>
               <p><strong>Message:</strong></p>
               <div style="background: white; padding: 15px; border-left: 4px solid #1e40af;">
                 ${data.message.replace(/\n/g, '<br>')}
@@ -47,7 +51,6 @@ const createEmailTemplate = (table, data) => {
           </div>
         `
       };
-
     case 'researchers':
       return {
         subject: `🔬 New Researcher Application - ${data.full_name}`,
@@ -59,7 +62,7 @@ const createEmailTemplate = (table, data) => {
               <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
               <p><strong>Institution:</strong> ${data.institution}</p>
               <p><strong>Research Area:</strong> ${data.research_area}</p>
-              <p><strong>CV/Resume:</strong> ${data.cv_url ? `<a href="${data.cv_url}">View CV</a>` : 'Not provided'}</p>
+              <p><strong>CV:</strong> ${data.cv_url ? `<a href="${data.cv_url}">View CV</a>` : 'Not provided'}</p>
               <p><strong>Research Interests:</strong></p>
               <div style="background: white; padding: 15px; border-left: 4px solid #1e40af;">
                 ${data.message.replace(/\n/g, '<br>')}
@@ -69,7 +72,6 @@ const createEmailTemplate = (table, data) => {
           </div>
         `
       };
-
     case 'mentors':
       return {
         subject: `👨‍🏫 New Mentor Application - ${data.full_name}`,
@@ -79,10 +81,10 @@ const createEmailTemplate = (table, data) => {
             <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <p><strong>Name:</strong> ${data.full_name}</p>
               <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-              <p><strong>Area of Expertise:</strong> ${data.expertise}</p>
+              <p><strong>Expertise:</strong> ${data.expertise}</p>
               <p><strong>Availability:</strong> ${data.availability}</p>
               <p><strong>LinkedIn:</strong> ${data.linkedin_url ? `<a href="${data.linkedin_url}">View Profile</a>` : 'Not provided'}</p>
-              <p><strong>Why they want to mentor:</strong></p>
+              <p><strong>Message:</strong></p>
               <div style="background: white; padding: 15px; border-left: 4px solid #1e40af;">
                 ${data.message.replace(/\n/g, '<br>')}
               </div>
@@ -91,7 +93,6 @@ const createEmailTemplate = (table, data) => {
           </div>
         `
       };
-
     case 'supporters':
       return {
         subject: `💝 New Support Donation - $${data.amount}`,
@@ -114,7 +115,6 @@ const createEmailTemplate = (table, data) => {
           </div>
         `
       };
-
     case 'newsletter':
       return {
         subject: `📧 New Newsletter Subscription`,
@@ -129,17 +129,10 @@ const createEmailTemplate = (table, data) => {
           </div>
         `
       };
-
     default:
       return {
         subject: '📝 New Form Submission',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>New Form Submission</h2>
-            <p>A new form submission was received. Check your admin dashboard for details.</p>
-            <p><a href="https://www.aeri-research.org/admin/dashboard">View Admin Dashboard</a></p>
-          </div>
-        `
+        html: 'A new form submission was received. Check your admin dashboard for details.'
       };
   }
 };
@@ -148,14 +141,14 @@ const createEmailTemplate = (table, data) => {
 async function sendNotificationEmail(table, record) {
   try {
     const emailData = createEmailTemplate(table, record);
-
+    
     const mailOptions = {
       from: `AERI Website <${process.env.EMAIL_USER}>`,
       to: process.env.NOTIFICATION_EMAIL,
       subject: emailData.subject,
       html: emailData.html
     };
-
+    
     const result = await transporter.sendMail(mailOptions);
     console.log(`✅ Email sent for ${table} submission:`, result.messageId);
     return true;
@@ -165,33 +158,30 @@ async function sendNotificationEmail(table, record) {
   }
 }
 
-// Polling function to check for new submissions
+// Polling function using direct database queries
 async function pollForNewSubmissions() {
   const tables = ['partners', 'researchers', 'mentors', 'supporters', 'newsletter'];
-
+  
   for (const table of tables) {
     try {
-      // Check for records from the last 2 minutes
+      // Query database directly for records from last 2 minutes
       const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
-
-      const { data, error } = await supabase
-        .from(table)
-        .select('*')
-        .gte('created_at', twoMinutesAgo)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error(`Error querying ${table}:`, error);
-        continue;
-      }
-
+      
+      const query = `
+        SELECT * FROM ${table} 
+        WHERE created_at >= $1 
+        ORDER BY created_at DESC
+      `;
+      
+      const result = await pool.query(query, [twoMinutesAgo]);
+      
       // Send email for each new record
-      for (const record of data || []) {
+      for (const record of result.rows) {
         await sendNotificationEmail(table, record);
       }
-
+      
     } catch (error) {
-      console.error(`Error processing ${table}:`, error);
+      console.error(`Error querying ${table}:`, error);
     }
   }
 }
@@ -206,14 +196,9 @@ app.get('/test-email', async (req, res) => {
       research_area: 'AI Testing',
       message: 'This is a test email from the AERI notification system.'
     };
-
+    
     const success = await sendNotificationEmail('researchers', testData);
-
-    if (success) {
-      res.json({ message: 'Test email sent successfully!' });
-    } else {
-      res.status(500).json({ error: 'Failed to send test email' });
-    }
+    res.json({ success, message: success ? 'Test email sent!' : 'Failed to send email' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -221,20 +206,39 @@ app.get('/test-email', async (req, res) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    service: 'AERI Email Service',
+  res.json({ 
+    status: 'OK', 
+    service: 'AERI Email Service (Direct DB)',
     timestamp: new Date().toISOString()
   });
 });
 
-// Start the service
-app.listen(PORT, () => {
-  console.log(`🚀 AERI Email Service running on port ${PORT}`);
-  console.log(`📧 Notification emails will be sent to: ${process.env.NOTIFICATION_EMAIL}`);
-  console.log(`🔄 Polling for new submissions every 30 seconds...`);
+// Test database connection
+app.get('/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({ success: true, time: result.rows[0].now });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  // Start polling immediately, then every 30 seconds
+// Start the service
+app.listen(PORT, async () => {
+  console.log(`🚀 AERI Email Service (Direct DB) running on port ${PORT}`);
+  console.log(`📧 Notification emails will be sent to: ${process.env.NOTIFICATION_EMAIL}`);
+  
+  // Test database connection
+  try {
+    await pool.query('SELECT NOW()');
+    console.log(`✅ Database connection successful`);
+  } catch (error) {
+    console.error(`❌ Database connection failed:`, error.message);
+  }
+  
+  console.log(`🔄 Polling for new submissions every 30 seconds...`);
+  
+  // Start polling
   pollForNewSubmissions();
   setInterval(pollForNewSubmissions, 30000);
 });
