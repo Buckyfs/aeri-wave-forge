@@ -49,4 +49,25 @@ export interface Newsletter {
   created_at: string;
   email: string;
   subscribed: boolean;
+}
+
+export interface CMSContent {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  section_key: string;
+  content_type: 'text' | 'html' | 'image' | 'json';
+  title: string;
+  content: string;
+  is_published: boolean;
+}
+
+export interface CMSAdmin {
+  id: string;
+  created_at: string;
+  email: string;
+  password_hash: string;
+  full_name: string;
+  is_active: boolean;
+  last_login?: string;
 } 

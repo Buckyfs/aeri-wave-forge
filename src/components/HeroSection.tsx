@@ -1,8 +1,14 @@
 import { ArrowRight } from 'lucide-react';
 import ParticlesBackground from './ParticlesBackground';
 import { ActionButton } from '@/components/ui/action-button';
+import { useCMSContentItem, getCMSContentValue } from '@/hooks/useCMSContent';
 
 const HeroSection = () => {
+  // Fetch CMS content with fallbacks
+  const { content: heroTitle } = useCMSContentItem('hero_title');
+  const { content: heroSubtitle } = useCMSContentItem('hero_subtitle');
+  const { content: heroCTA } = useCMSContentItem('hero_cta_text');
+
   return (
     <section className="relative min-h-[60vh] flex items-center pt-12 overflow-hidden">
       {/* Subtle background pattern */}
@@ -16,10 +22,10 @@ const HeroSection = () => {
           {/* Content side */}
           <div className="text-left animate-fade-in-up">
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-primary">
-              Transforming Tomorrow Today
+              {getCMSContentValue(heroTitle, 'Transforming Tomorrow Today')}
             </h1>
             <p className="text-lg md:text-xl mb-8 text-gray-700 max-w-lg">
-              Join the movement where curiosity meets innovation. At AERI, we empower young minds to turn environmental challenges into sustainable solutions.
+              {getCMSContentValue(heroSubtitle, 'Join the movement where curiosity meets innovation. At AERI, we empower young minds to turn environmental challenges into sustainable solutions.')}
             </p>
             <div className="flex flex-wrap gap-4">
               <ActionButton
@@ -28,7 +34,7 @@ const HeroSection = () => {
                 className="bg-primary hover:bg-primary/90 text-white"
                 showArrow
               >
-                Get Started
+                {getCMSContentValue(heroCTA, 'Get Started')}
               </ActionButton>
               <ActionButton
                 to="/about"

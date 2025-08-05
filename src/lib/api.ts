@@ -40,5 +40,46 @@ export const api = {
       .from('newsletter')
       .insert([{ email, subscribed: true }]);
     if (error) throw error;
+  },
+
+  // CMS functions (RLS disabled for compatibility)
+  async getCMSContent(sectionKey?: string) {
+    let query = supabase
+      .from('cms_content')
+      .select('*');
+    
+    if (sectionKey) {
+      query = query.eq('section_key', sectionKey).single();
+    }
+    
+    const { data, error } = await query;
+    if (error) {
+      console.warn('CMS content fetch error:', error);
+      return null; // Return null instead of throwing to prevent site breakage
+    }
+    return data;
+  },
+
+  async updateCMSContent(sectionKey: string, content: string) {
+    const { error } = await supabase
+      .from('cms_content')
+      .update({ content })
+      .eq('section_key', sectionKey);
+    if (error) {
+      console.error('CMS content update error:', error);
+      throw error;
+    }
+  },
+
+  async getAllCMSContent() {
+    const { data, error } = await supabase
+      .from('cms_content')
+      .select('*')
+      .order('section_key');
+    if (error) {
+      console.warn('CMS content fetch error:', error);
+      return []; // Return empty array instead of throwing
+    }
+    return data || [];
   }
 }; 
