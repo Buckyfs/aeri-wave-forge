@@ -34,7 +34,7 @@ const Projects = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      
+
       {/* Hero Section */}
       <div className="relative min-h-[30vh] bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -94,11 +94,8 @@ const Projects = () => {
                     ))}
                   </div>
                   <div className="mt-8">
-                    <a
-                      href={project.link}
-                      className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      Learn more
+                    <span className="inline-flex items-center text-sm font-medium text-gray-400 cursor-not-allowed">
+                      Learn more (Coming Soon)
                       <svg
                         className="ml-1 h-4 w-4"
                         fill="currentColor"
@@ -110,7 +107,7 @@ const Projects = () => {
                           clipRule="evenodd"
                         />
                       </svg>
-                    </a>
+                    </span>
                   </div>
                 </div>
               </motion.div>
