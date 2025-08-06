@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 
 export function MentorForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,7 +14,27 @@ export function MentorForm() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    // Extract form data for database
+    const mentorData = {
+      full_name: formData.get('full_name') as string,
+      email: formData.get('email') as string,
+      profession: formData.get('profession') as string,
+      experience_years: formData.get('experience_years') as string,
+      expertise_areas: formData.get('expertise_areas') as string,
+      motivation: formData.get('motivation') as string,
+      availability: formData.get('availability') as string,
+    };
+
     try {
+      // Step 1: Save to Supabase database
+      try {
+        await api.submitMentorApplication(mentorData);
+        console.log('✅ Mentor application saved to database');
+      } catch (dbError) {
+        console.warn('⚠️ Database save failed, continuing with email...', dbError);
+      }
+
+      // Step 2: Send to Formspree for email notification
       const response = await fetch('https://formspree.io/f/meozrzzr', {
         method: 'POST',
         body: formData,
@@ -26,7 +47,7 @@ export function MentorForm() {
         form.reset();
         showSuccessPopup('Mentor Application Submitted', 'Thank you for your interest in becoming a mentor! We will review your application and contact you soon.');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Email notification failed');
       }
     } catch (error) {
       alert('There was an error submitting the form. Please try again.');
@@ -38,7 +59,7 @@ export function MentorForm() {
   const showSuccessPopup = (title: string, message: string) => {
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    
+
     overlay.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 transform transition-all">
         <div class="text-center">
@@ -55,9 +76,9 @@ export function MentorForm() {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(overlay);
-    
+
     const closeBtn = overlay.querySelector('#closeModal');
     closeBtn?.addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', (e) => {
@@ -71,9 +92,9 @@ export function MentorForm() {
         <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Full Name
         </label>
-        <Input 
+        <Input
           id="full_name"
-          name="full_name" 
+          name="full_name"
           type="text"
           required
           disabled={isSubmitting}
@@ -84,9 +105,9 @@ export function MentorForm() {
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Email
         </label>
-        <Input 
+        <Input
           id="email"
-          name="email" 
+          name="email"
           type="email"
           required
           disabled={isSubmitting}
@@ -97,9 +118,9 @@ export function MentorForm() {
         <label htmlFor="profession" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Profession/Current Role
         </label>
-        <Input 
+        <Input
           id="profession"
-          name="profession" 
+          name="profession"
           type="text"
           required
           disabled={isSubmitting}
@@ -110,9 +131,9 @@ export function MentorForm() {
         <label htmlFor="experience_years" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Years of Experience
         </label>
-        <select 
+        <select
           id="experience_years"
-          name="experience_years" 
+          name="experience_years"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
           disabled={isSubmitting}
@@ -155,9 +176,9 @@ export function MentorForm() {
         <label htmlFor="availability" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Availability
         </label>
-        <select 
+        <select
           id="availability"
-          name="availability" 
+          name="availability"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
           disabled={isSubmitting}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 
 export function PartnerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,7 +14,26 @@ export function PartnerForm() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    // Extract form data for database
+    const partnerData = {
+      organization_name: formData.get('organization_name') as string,
+      contact_name: formData.get('contact_name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string || undefined,
+      partnership_type: formData.get('partnership_type') as string,
+      message: formData.get('message') as string,
+    };
+
     try {
+      // Step 1: Save to Supabase database
+      try {
+        await api.submitPartnerApplication(partnerData);
+        console.log('✅ Partner application saved to database');
+      } catch (dbError) {
+        console.warn('⚠️ Database save failed, continuing with email...', dbError);
+      }
+
+      // Step 2: Send to Formspree for email notification
       const response = await fetch('https://formspree.io/f/meozrzzr', {
         method: 'POST',
         body: formData,
@@ -25,11 +45,11 @@ export function PartnerForm() {
       if (response.ok) {
         // Reset form
         form.reset();
-        
+
         // Show success popup
         showSuccessPopup('Partnership Application Submitted', 'Thank you for your interest in partnering with AERI! We will review your application and get back to you soon.');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Email notification failed');
       }
     } catch (error) {
       alert('There was an error submitting the form. Please try again.');
@@ -42,7 +62,7 @@ export function PartnerForm() {
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    
+
     // Create modal
     overlay.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 transform transition-all">
@@ -60,10 +80,10 @@ export function PartnerForm() {
         </div>
       </div>
     `;
-    
+
     // Add to page
     document.body.appendChild(overlay);
-    
+
     // Add click handlers
     const closeBtn = overlay.querySelector('#closeModal');
     closeBtn?.addEventListener('click', () => overlay.remove());

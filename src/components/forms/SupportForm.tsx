@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 
 export function SupportForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,7 +14,27 @@ export function SupportForm() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    // Extract form data for database
+    const supportData = {
+      full_name: formData.get('full_name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string || undefined,
+      support_type: formData.get('support_type') as string,
+      organization: formData.get('organization') as string || undefined,
+      message: formData.get('message') as string,
+      involvement_level: formData.get('involvement_level') as string,
+    };
+
     try {
+      // Step 1: Save to Supabase database
+      try {
+        await api.submitDonation(supportData);
+        console.log('✅ Support application saved to database');
+      } catch (dbError) {
+        console.warn('⚠️ Database save failed, continuing with email...', dbError);
+      }
+
+      // Step 2: Send to Formspree for email notification
       const response = await fetch('https://formspree.io/f/meozrzzr', {
         method: 'POST',
         body: formData,
@@ -26,7 +47,7 @@ export function SupportForm() {
         form.reset();
         showSuccessPopup('Support Application Submitted', 'Thank you for your interest in supporting AERI! We appreciate your commitment and will be in touch soon.');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Email notification failed');
       }
     } catch (error) {
       alert('There was an error submitting the form. Please try again.');
@@ -38,7 +59,7 @@ export function SupportForm() {
   const showSuccessPopup = (title: string, message: string) => {
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    
+
     overlay.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 transform transition-all">
         <div class="text-center">
@@ -55,9 +76,9 @@ export function SupportForm() {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(overlay);
-    
+
     const closeBtn = overlay.querySelector('#closeModal');
     closeBtn?.addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', (e) => {
@@ -71,9 +92,9 @@ export function SupportForm() {
         <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Full Name
         </label>
-        <Input 
+        <Input
           id="full_name"
-          name="full_name" 
+          name="full_name"
           type="text"
           required
           disabled={isSubmitting}
@@ -84,9 +105,9 @@ export function SupportForm() {
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Email
         </label>
-        <Input 
+        <Input
           id="email"
-          name="email" 
+          name="email"
           type="email"
           required
           disabled={isSubmitting}
@@ -97,9 +118,9 @@ export function SupportForm() {
         <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Phone (Optional)
         </label>
-        <Input 
+        <Input
           id="phone"
-          name="phone" 
+          name="phone"
           type="tel"
           disabled={isSubmitting}
         />
@@ -109,9 +130,9 @@ export function SupportForm() {
         <label htmlFor="support_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           How would you like to support us?
         </label>
-        <select 
+        <select
           id="support_type"
-          name="support_type" 
+          name="support_type"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
           disabled={isSubmitting}
@@ -129,9 +150,9 @@ export function SupportForm() {
         <label htmlFor="organization" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Organization (Optional)
         </label>
-        <Input 
+        <Input
           id="organization"
-          name="organization" 
+          name="organization"
           type="text"
           disabled={isSubmitting}
         />
@@ -154,9 +175,9 @@ export function SupportForm() {
         <label htmlFor="involvement_level" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Preferred Level of Involvement
         </label>
-        <select 
+        <select
           id="involvement_level"
-          name="involvement_level" 
+          name="involvement_level"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
           disabled={isSubmitting}

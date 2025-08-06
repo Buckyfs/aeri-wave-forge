@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { api } from '@/lib/api';
 
 export function NewsletterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -11,9 +12,19 @@ export function NewsletterForm() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const email = formData.get('email') as string;
 
     try {
-      const response = await fetch('https://formspree.io/f/meozrzzr', {
+      // Step 1: Save to Supabase database
+      try {
+        await api.subscribeToNewsletter(email);
+        console.log('✅ Saved to database');
+      } catch (dbError) {
+        console.warn('⚠️ Database save failed, continuing with email...', dbError);
+      }
+
+      // Step 2: Send to Formspree for email notification
+      const formspreeResponse = await fetch('https://formspree.io/f/meozrzzr', {
         method: 'POST',
         body: formData,
         headers: {
@@ -21,14 +32,14 @@ export function NewsletterForm() {
         }
       });
 
-      if (response.ok) {
+      if (formspreeResponse.ok) {
         // Reset form
         form.reset();
-        
+
         // Show success popup
         showSuccessPopup('Newsletter Subscription', 'Thank you for subscribing to our newsletter! You\'ll receive updates about our latest research and events.');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Email notification failed');
       }
     } catch (error) {
       alert('There was an error submitting the form. Please try again.');
@@ -41,7 +52,7 @@ export function NewsletterForm() {
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    
+
     // Create modal
     overlay.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 transform transition-all">
@@ -59,10 +70,10 @@ export function NewsletterForm() {
         </div>
       </div>
     `;
-    
+
     // Add to page
     document.body.appendChild(overlay);
-    
+
     // Add click handlers
     const closeBtn = overlay.querySelector('#closeModal');
     closeBtn?.addEventListener('click', () => overlay.remove());
@@ -73,10 +84,10 @@ export function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      <Input 
-        type="email" 
+      <Input
+        type="email"
         name="email"
-        placeholder="Enter your email" 
+        placeholder="Enter your email"
         className="flex-1"
         required
         disabled={isSubmitting}

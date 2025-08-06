@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { ActionButton } from '@/components/ui/action-button';
+import { api } from '@/lib/api';
 
 const CtaSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,8 +14,18 @@ const CtaSection = () => {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const email = formData.get('email') as string;
 
     try {
+      // Step 1: Save to Supabase database
+      try {
+        await api.subscribeToNewsletter(email);
+        console.log('✅ Newsletter subscription saved to database');
+      } catch (dbError) {
+        console.warn('⚠️ Database save failed, continuing with email...', dbError);
+      }
+
+      // Step 2: Send to Formspree for email notification
       const response = await fetch('https://formspree.io/f/meozrzzr', {
         method: 'POST',
         body: formData,
@@ -26,11 +37,11 @@ const CtaSection = () => {
       if (response.ok) {
         // Reset form
         form.reset();
-        
+
         // Show success popup
         showSuccessPopup('Newsletter Subscription', 'Thank you for subscribing! You\'ll receive project updates, research breakthroughs, and community achievements.');
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Email notification failed');
       }
     } catch (error) {
       alert('There was an error submitting the form. Please try again.');
@@ -43,7 +54,7 @@ const CtaSection = () => {
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
-    
+
     // Create modal
     overlay.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-8 transform transition-all">
@@ -61,10 +72,10 @@ const CtaSection = () => {
         </div>
       </div>
     `;
-    
+
     // Add to page
     document.body.appendChild(overlay);
-    
+
     // Add click handlers
     const closeBtn = overlay.querySelector('#closeModal');
     closeBtn?.addEventListener('click', () => overlay.remove());
